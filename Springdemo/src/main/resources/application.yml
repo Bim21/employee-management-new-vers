@@ -1,0 +1,3 @@
+hrm:
+  api:
+    url: http://stg-api-hrmv2.nccsoft.vn/api/services/app/CheckIn/GetUserForCheckIn
