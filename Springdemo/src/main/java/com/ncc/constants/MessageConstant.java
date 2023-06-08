@@ -6,7 +6,7 @@ public class MessageConstant {
     public static final String LIST_EMPLOYEE_IS_EMPTY = "List Employee is Empty";
     public static final String CHECK_IN_SUCCESSFULLY = "Employee has already checked in";
 
-    public static final String CHECK_IN_FAILED = "Employee has not checked in";
+    public static final String CHECK_OUT_SUCCESSFULLY = "Employee has already checked out";
     public static final String EMAIL_IS_EXIST = "Email is exist";
     public static final String SEND_MAIL_DONE = "Done";
     public static final String SEND_MAIL_FAIL = "Fail";
