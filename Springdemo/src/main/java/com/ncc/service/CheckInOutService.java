@@ -12,7 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -57,5 +60,26 @@ public class CheckInOutService implements ICheckInOutService{
 
         CheckInOut saveCheckInOut = checkInOutRepository.save(checkInOut);
         return mapper.map(saveCheckInOut, CheckInOutDTO.class);
+    }
+
+    @Override
+    public List<CheckInOutDTO> getCheckInRecordsByEmployeeAndDateRange(Integer employeeCode, LocalDate startDate, LocalDate endDate) {
+        Employee employee = employeeRepository.findByEmployeeCode(employeeCode);
+        List<CheckInOutDTO> checkInOutDTOs = checkInOutRepository.findByEmployeeIdAndDateBetween(employee.getId(),startDate, endDate);
+        return convertToDTOs(checkInOutDTOs);
+    }
+
+    private List<CheckInOutDTO> convertToDTOs(List<CheckInOut> checkInOuts){
+        List<CheckInOutDTO> dtos = new ArrayList<>();
+        for(CheckInOut checkInOut : checkInOuts){
+            CheckInOutDTO dto = new CheckInOutDTO();
+            //Sao chép các thuộc tính từ CheckinRecord sang CheckInOut sang CheckInOutDTO
+            dto.setId(checkInOut.getId());
+            dto.setCheckInTime(checkInOut.getCheckInTime());
+            dto.setCheckOutTime(checkInOut.getCheckOutTime());
+            // Thêm dto vào danh sách
+            dtos.add(dto);
+        }
+        return dtos;
     }
 }
