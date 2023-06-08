@@ -25,16 +25,16 @@ public class Employee {
     @Column(name = "last_name", length = 50, nullable = false)
     private String lastName;
 
-    @Column(name = "username", length = 50, unique = true, nullable = false)
+    @Column(name = "username", length = 50, unique = true)
     private String userName;
 
-    @Column(name = "password", length = 800, nullable = false)
+    @Column(name = "password", length = 800)
     private String password;
 
-    @Column(name = "email", length = 50, unique = true, nullable = false)
+    @Column(name = "email", length = 50)
     private String email;
 
-    @Column(name = "check_in_code", unique = true, nullable = false)
+    @Column(name = "check_in_code", unique = true)
     private Integer employeeCode;
 
 }
