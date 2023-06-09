@@ -1,23 +1,27 @@
 package com.ncc.service;
 
 import com.ncc.constants.MessageConstant;
+import com.ncc.dto.CheckInOutDTO;
+import com.ncc.dto.EmployeeCheckInCheckOutDTO;
 import com.ncc.dto.EmployeeDTO;
+import com.ncc.entity.CheckInOut;
 import com.ncc.entity.Employee;
 import com.ncc.exception.NotFoundException;
+import com.ncc.repository.ICheckInOutRepository;
 import com.ncc.repository.IEmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class EmployeeService implements IEmployeeService {
     private final IEmployeeRepository employeeRepository;
+    private final ICheckInOutRepository checkInOutRepository;
     private final ModelMapper mapper;
 
     @Override
