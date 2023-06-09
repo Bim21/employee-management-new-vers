@@ -26,5 +26,4 @@ public interface ICheckInOutRepository extends JpaRepository<CheckInOut, Integer
     @Query("SELECT cio FROM CheckInOut cio WHERE cio.employee = :employee AND MONTH(cio.date) = :month AND cio.checkInTime > :checkInTimeThreshold")
     List<CheckInOut> findLateCheckInsByMonth(@Param("employee") Employee employee, @Param("month") int month, @Param("checkInTimeThreshold") LocalTime checkInTimeThreshold);
 
-
 }

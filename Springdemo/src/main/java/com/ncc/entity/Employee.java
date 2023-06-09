@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -37,4 +38,6 @@ public class Employee {
     @Column(name = "check_in_code", unique = true)
     private Integer employeeCode;
 
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    private List<EmployeeRole> employeeRoles;
 }
