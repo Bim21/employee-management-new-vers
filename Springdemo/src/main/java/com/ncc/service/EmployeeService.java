@@ -1,17 +1,21 @@
 package com.ncc.service;
 
 import com.ncc.constants.MessageConstant;
-import com.ncc.dto.CheckInOutDTO;
-import com.ncc.dto.EmployeeCheckInCheckOutDTO;
-import com.ncc.dto.EmployeeDTO;
+import com.ncc.dto.*;
 import com.ncc.entity.CheckInOut;
+import com.ncc.entity.ERole;
 import com.ncc.entity.Employee;
+import com.ncc.entity.EmployeeRole;
 import com.ncc.exception.NotFoundException;
 import com.ncc.repository.ICheckInOutRepository;
 import com.ncc.repository.IEmployeeRepository;
+import com.ncc.repository.IEmployeeRoleRepository;
+import com.ncc.repository.IRoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -23,25 +27,90 @@ public class EmployeeService implements IEmployeeService {
     private final IEmployeeRepository employeeRepository;
     private final ICheckInOutRepository checkInOutRepository;
     private final ModelMapper mapper;
-
+    private final PasswordEncoder passwordEncoder;
+    private final RestTemplate restTemplate;
+    private final IRoleRepository roleRepository;
+    private final IEmployeeRoleRepository employeeRoleRepository;
     @Override
-    public EmployeeDTO createEmployee(EmployeeDTO employeeDTO) {
+    public List<EmployeeResponseDTO> syncData(EmployeeRequestDTO employeeRequestDTO) {
         String employeeCode = generateEmployeeCode();
-        Employee employee = mapper.map(employeeDTO, Employee.class);
+        ResultDTO resultDTO = restTemplate.getForObject("/", ResultDTO.class);
+
+        List<EmployeeDTO> employeeDTOList = resultDTO.getResult();
+        List<Employee> employeeListGet = employeeRepository.findAll();
+        List<String> emailListGet = new ArrayList<>();
+        List<Employee> employeeList = new ArrayList<>();
+        if (!employeeListGet.isEmpty()) {
+            emailListGet = employeeListGet.stream()
+                    .map(Employee::getEmail)
+                    .collect(Collectors.toList());
+        }
+        List<String> emailDTOList = employeeDTOList.stream()
+                .map(EmployeeDTO::getEmail)
+                .collect(Collectors.toList());
+        for (EmployeeDTO employeeDTO : employeeDTOList){
+            if(emailListGet.isEmpty() || !emailListGet.contains(employeeDTO.getEmail())){
+                Employee employee = mapper.map(employeeDTO, Employee.class);
+                employee.setUserName(employeeDTO.getEmail().substring(0, employeeDTO.getEmail().indexOf("@")));
+                employee.setPassword(passwordEncoder.encode(employeeRequestDTO.getPassword()));
+                employee.setEmployeeCode(Integer.valueOf(employeeCode));
+                employee = employeeRepository.save(employee);
+                List<EmployeeRole> employeeRoles = new ArrayList<>();
+                for(int roleId : employeeRequestDTO.getRoleIds()){
+                    EmployeeRole employeeRole = new EmployeeRole();
+                    employeeRole.setEmployee(employeeRepository.getById(employee.getId()));
+                    employeeRole.setRole(roleRepository.getById(roleId));
+                    employeeRoles.add(employeeRole);
+                }
+                employee.setEmployeeRoles(employeeRoles);
+                employeeList.add(employee);
+                employeeRoles = employeeRoleRepository.saveAll(employeeRoles);
+            }
+        }
+        employeeRepository.saveAll(employeeList);
+        for(Employee employee: employeeListGet){
+            if(!emailDTOList.contains(employee.getEmail())){
+                employee.setActive(false);
+                employeeRepository.save(employee);
+            }
+        }
+            return getEmployeeResponseDTOS(employeeList);
+    }
+    private List<EmployeeResponseDTO> getEmployeeResponseDTOS(List<Employee> employeeList){
+        List<EmployeeResponseDTO> employeeResponseDTOList = new ArrayList<>();
+        for (Employee employee: employeeList) {
+            EmployeeResponseDTO employeeResponseDTO = mapper.map(employee, EmployeeResponseDTO.class);
+            employeeResponseDTO.setFullName(employee.getLastName() + " " + employee.getFirstName());
+            List<ERole> roleNames = new ArrayList<>();
+            for (EmployeeRole employeeRole: employee.getEmployeeRoles()) {
+                ERole roleName = employeeRole.getRole().getRoleName();
+                roleNames.add(roleName);
+            }
+            employeeResponseDTO.setRoleNames(roleNames);
+            employeeResponseDTOList.add(employeeResponseDTO);
+        }
+        return employeeResponseDTOList;
+    }
+    @Override
+    public EmployeeResponseDTO createEmployee(EmployeeRequestDTO employeeRequestDTO) {
+        String employeeCode = generateEmployeeCode();
+        Employee employee = mapper.map(employeeRequestDTO, Employee.class);
+        employee.setUserName(employee.getEmail().substring(0, employeeRequestDTO.getEmail().indexOf("@")));
+        employee.setPassword(passwordEncoder.encode(employeeRequestDTO.getPassword()));
         employee.setEmployeeCode(Integer.valueOf(employeeCode));
         Employee saveEmployee = employeeRepository.save(employee);
-        EmployeeDTO saveEmployeeDTO = mapper.map(saveEmployee, EmployeeDTO.class);
+        EmployeeResponseDTO saveEmployeeDTO = mapper.map(saveEmployee, EmployeeResponseDTO.class);
         return saveEmployeeDTO;
     }
 
     @Override
-    public EmployeeDTO updateEmployee(EmployeeDTO employeeDTO) {
-        Optional<Employee> optionalEmployee = employeeRepository.findById(employeeDTO.getId());
+    public EmployeeResponseDTO updateEmployee(EmployeeRequestDTO employeeRequestDTO) {
+        Optional<Employee> optionalEmployee = employeeRepository.findById(employeeRequestDTO.getId());
         if (optionalEmployee.isPresent()) {
             Employee employee = optionalEmployee.get();
-            mapper.map(employeeDTO, employee);
+            mapper.map(employeeRequestDTO, employee);
             Employee updateEmployee = employeeRepository.save(employee);
-            EmployeeDTO updateEmployeeDTO = mapper.map(updateEmployee, EmployeeDTO.class);
+            EmployeeResponseDTO updateEmployeeDTO = mapper.map(updateEmployee, EmployeeResponseDTO.class);
             return updateEmployeeDTO;
         } else {
             throw new NotFoundException(MessageConstant.EMPLOYEE_IS_NULL);
@@ -64,10 +133,10 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Override
-    public List<EmployeeDTO> searchEmployeesByName(String keyword) {
+    public List<EmployeeResponseDTO> searchEmployeesByName(String keyword) {
         List<Employee> employees = employeeRepository.findByUserNameContainingIgnoreCase(keyword);
         return employees.stream()
-                .map(employee -> mapper.map(employee, EmployeeDTO.class))
+                .map(employee -> mapper.map(employee, EmployeeResponseDTO.class))
                 .collect(Collectors.toList());
     }
 

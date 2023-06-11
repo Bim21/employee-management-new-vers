@@ -11,6 +11,6 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 public class EmployeeCheckInCheckOutDTO {
-    private EmployeeDTO employeeDTO;
+    private EmployeeResponseDTO employeeResponseDTO;
     private Map<LocalDate, CheckInOutDTO> checkInOutDTOMap;
 }

@@ -4,6 +4,7 @@ import com.ncc.constants.MessageConstant;
 import com.ncc.dto.CheckInOutDTO;
 import com.ncc.dto.EmployeeCheckInCheckOutDTO;
 import com.ncc.dto.EmployeeDTO;
+import com.ncc.dto.EmployeeResponseDTO;
 import com.ncc.entity.CheckInOut;
 import com.ncc.entity.Employee;
 import com.ncc.exception.CheckInException;
@@ -115,7 +116,7 @@ public class CheckInOutService implements ICheckInOutService{
             Map<LocalDate, CheckInOutDTO> checkInOutDTOMap = (Map<LocalDate, CheckInOutDTO>) entry.getKey();
 
             EmployeeCheckInCheckOutDTO dto = new EmployeeCheckInCheckOutDTO();
-            dto.setEmployeeDTO(EmployeeDTO.fromEntity(employee));
+            dto.setEmployeeResponseDTO(EmployeeResponseDTO.fromEntity(employee));
             dto.setCheckInOutDTOMap(checkInOutDTOMap);
 
             result.add(dto);
@@ -132,7 +133,7 @@ public class CheckInOutService implements ICheckInOutService{
             List<CheckInOut> lateCheckIns = checkInOutRepository.findLateCheckInsByMonth(employee, month, checkInTimeThreshold);
             if (!lateCheckIns.isEmpty()){
                 EmployeeCheckInCheckOutDTO dto = new EmployeeCheckInCheckOutDTO();
-                dto.setEmployeeDTO(EmployeeDTO.fromEntity(employee));
+                dto.setEmployeeResponseDTO(EmployeeResponseDTO.fromEntity(employee));
                 dto.setCheckInOutDTOMap((Map<LocalDate, CheckInOutDTO>) lateCheckIns);
 
                 result.add(dto);

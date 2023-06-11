@@ -38,6 +38,9 @@ public class Employee {
     @Column(name = "check_in_code", unique = true)
     private Integer employeeCode;
 
+    @Column(name = "ACTIVE")
+    private boolean active;
+
     @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<EmployeeRole> employeeRoles;
 }
