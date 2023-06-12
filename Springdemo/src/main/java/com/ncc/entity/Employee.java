@@ -41,8 +41,6 @@ public class Employee {
     @Column(name = "ACTIVE")
     private boolean active;
 
-    @Column(name = "role")
-    private ERole role;
     @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<EmployeeRole> employeeRoles;
 

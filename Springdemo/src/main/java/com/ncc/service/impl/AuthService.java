@@ -1,4 +1,4 @@
-package com.ncc.service;
+package com.ncc.service.impl;
 
 import com.ncc.configuration.authrequest.JwtResponse;
 import com.ncc.configuration.authrequest.LoginRequest;
@@ -11,6 +11,7 @@ import com.ncc.repository.IEmployeeRepository;
 import com.ncc.repository.IEmployeeRoleRepository;
 import com.ncc.repository.IRoleRepository;
 import com.ncc.security.UserDetailsImpl;
+import com.ncc.service.IAuthService;
 import com.ncc.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

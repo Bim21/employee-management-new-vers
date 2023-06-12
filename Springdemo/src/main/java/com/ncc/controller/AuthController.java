@@ -2,10 +2,8 @@ package com.ncc.controller;
 
 import com.ncc.configuration.authrequest.LoginRequest;
 import com.ncc.configuration.authrequest.SignUpRequest;
-import com.ncc.service.AuthService;
 import com.ncc.service.IAuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -1,4 +1,4 @@
-package com.ncc.service;
+package com.ncc.service.impl;
 
 import com.ncc.constants.MessageConstant;
 import com.ncc.dto.CheckInOutDTO;
@@ -10,6 +10,7 @@ import com.ncc.exception.CheckInException;
 import com.ncc.exception.NotFoundException;
 import com.ncc.repository.ICheckInOutRepository;
 import com.ncc.repository.IEmployeeRepository;
+import com.ncc.service.ICheckInOutService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class CheckInOutService implements ICheckInOutService{
+public class CheckInOutService implements ICheckInOutService {
 
     private final ICheckInOutRepository checkInOutRepository;
     private final IEmployeeRepository employeeRepository;
@@ -145,7 +146,6 @@ public class CheckInOutService implements ICheckInOutService{
                 EmployeeCheckInCheckOutDTO dto = new EmployeeCheckInCheckOutDTO();
                 dto.setEmployeeResponseDTO(EmployeeResponseDTO.fromEntity(employee));
                 dto.setCheckInOutDTOMap((Map<LocalDate, CheckInOutDTO>) lateCheckIns);
-
                 result.add(dto);
             }
         }

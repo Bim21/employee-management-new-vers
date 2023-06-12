@@ -2,7 +2,6 @@ package com.ncc.controller;
 
 import com.ncc.dto.CheckInOutDTO;
 import com.ncc.dto.EmployeeCheckInCheckOutDTO;
-import com.ncc.service.CheckInOutService;
 import com.ncc.service.ICheckInOutService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;

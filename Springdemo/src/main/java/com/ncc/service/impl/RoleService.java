@@ -1,15 +1,16 @@
-package com.ncc.service;
+package com.ncc.service.impl;
 
 import com.ncc.dto.RoleDTO;
 import com.ncc.entity.Role;
 import com.ncc.mapper.IRoleMapper;
 import com.ncc.repository.IRoleRepository;
+import com.ncc.service.IRoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class RoleService implements IRoleService{
+public class RoleService implements IRoleService {
     private final IRoleMapper roleMapper;
 
     private final IRoleRepository roleRepository;

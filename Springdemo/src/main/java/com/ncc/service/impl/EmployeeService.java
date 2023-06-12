@@ -1,4 +1,4 @@
-package com.ncc.service;
+package com.ncc.service.impl;
 
 import com.ncc.constants.MessageConstant;
 import com.ncc.dto.*;
@@ -11,6 +11,8 @@ import com.ncc.repository.ICheckInOutRepository;
 import com.ncc.repository.IEmployeeRepository;
 import com.ncc.repository.IEmployeeRoleRepository;
 import com.ncc.repository.IRoleRepository;
+import com.ncc.service.IEmployeeService;
+import com.ncc.service.IMailService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +33,7 @@ public class EmployeeService implements IEmployeeService {
     private final RestTemplate restTemplate;
     private final IRoleRepository roleRepository;
     private final IEmployeeRoleRepository employeeRoleRepository;
+    private final IMailService mailService;
 //    private final EmployeeRequestMapper employeeRequestMapper;
     @PostConstruct
     public void init(){
@@ -115,6 +118,7 @@ public class EmployeeService implements IEmployeeService {
         employee.setEmployeeCode(Integer.valueOf(employeeCode));
         Employee saveEmployee = employeeRepository.save(employee);
         EmployeeResponseDTO saveEmployeeDTO = mapper.map(saveEmployee, EmployeeResponseDTO.class);
+        mailService.sendEmployeeCreationEmail(employee);
         return saveEmployeeDTO;
     }
 

@@ -31,29 +31,6 @@ public class EmployeeController {
     @Autowired
     private MessageSource messageSource;
 
-//    @Value("${hrm.api.url}")
-//    private String hrmApiUrl;
-
-//    @GetMapping(value = "/employee")
-//    public EmployeeResponseDTO getAndSaveListUser() throws JsonProcessingException {
-//        RestTemplate restTemplate = new RestTemplate();
-//        String fooResourceUrl = hrmApiUrl;
-//        ResponseEntity<String> response = restTemplate.getForEntity(fooResourceUrl, String.class);
-//        List<String> rs = Collections.singletonList(response.getBody());
-//        ObjectMapper mapper = new ObjectMapper();
-//        JsonNode rootNode = mapper.readTree(response.getBody());
-//        JsonNode resultNode = rootNode.get("result");
-//        List<Employee> employees = mapper.readValue(resultNode.toString(), new TypeReference<List<Employee>>() {
-//        });
-//        for (Employee employee : employees) {
-//            System.out.println(employee);
-//        }
-//
-//        employeeService.saveUser(employees);
-//
-//        return getAndSaveListUser();
-//
-//    }
     @PostMapping("/employee")
     public List<EmployeeResponseDTO> syncData(@RequestBody EmployeeRequestDTO employeeRequestDTO){
         return employeeService.syncData(employeeRequestDTO);
