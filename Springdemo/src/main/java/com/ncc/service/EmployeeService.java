@@ -43,10 +43,13 @@ public class EmployeeService implements IEmployeeService {
     }
     @Override
     public List<EmployeeResponseDTO> syncData(EmployeeRequestDTO employeeRequestDTO) {
-        String employeeCode = generateEmployeeCode();
+
         ResultDTO resultDTO = restTemplate.getForObject("/", ResultDTO.class);
 
         List<EmployeeDTO> employeeDTOList = resultDTO.getResult();
+//        if (!roleRepository.getSetRoleByRoleId(employeeRequestDTO.getRoleIds()).isEmpty()) {
+//            throw new NotFoundException(MessageConstant.ROLE_IS_NULL);
+//        }
         List<Employee> employeeListGet = employeeRepository.findAll();
         List<String> emailListGet = new ArrayList<>();
         List<Employee> employeeList = new ArrayList<>();
@@ -63,9 +66,11 @@ public class EmployeeService implements IEmployeeService {
                 Employee employee = mapper.map(employeeDTO, Employee.class);
                 employee.setUserName(employeeDTO.getEmail().substring(0, employeeDTO.getEmail().indexOf("@")));
                 employee.setPassword(passwordEncoder.encode(employeeRequestDTO.getPassword()));
+                String employeeCode = generateEmployeeCode();
                 employee.setEmployeeCode(Integer.valueOf(employeeCode));
                 employee = employeeRepository.save(employee);
                 List<EmployeeRole> employeeRoles = new ArrayList<>();
+                employeeRequestDTO.setRoleIds(Arrays.asList()); // Gán danh sách các roleId vào
                 for(int roleId : employeeRequestDTO.getRoleIds()){
                     EmployeeRole employeeRole = new EmployeeRole();
                     employeeRole.setEmployee(employeeRepository.getById(employee.getId()));

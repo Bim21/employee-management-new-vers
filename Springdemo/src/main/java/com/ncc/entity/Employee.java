@@ -17,7 +17,7 @@ import java.util.List;
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "employee_id")
     private int id;
 
     @Column(name = "first_name", length = 50)
@@ -35,7 +35,7 @@ public class Employee {
     @Column(name = "email", length = 50)
     private String email;
 
-    @Column(name = "check_in_code", unique = true)
+    @Column(name = "check_in_code",unique = true)
     private Integer employeeCode;
 
     @Column(name = "ACTIVE")
@@ -45,4 +45,5 @@ public class Employee {
     private ERole role;
     @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<EmployeeRole> employeeRoles;
+
 }

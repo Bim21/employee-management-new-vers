@@ -12,5 +12,9 @@ import java.util.Optional;
 @Repository
 public interface IRoleRepository extends JpaRepository<Role, Integer> {
 
+    @Query("SELECT r FROM Role r " +
+            "WHERE r.id IN (:roleIds)")
+    List<Role> getSetRoleByRoleId(List<Integer> roleIds);
+
     Optional<Role> findByRoleName(ERole roleName);
 }

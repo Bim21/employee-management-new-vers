@@ -19,4 +19,13 @@ public class EmployeeRequestDTO {
     private String password;
     private String employeeCode;
     private List<Integer> roleIds;
+
+    public void getRoleIds(List<Integer> roleIds) {
+        int n = 1;
+        for (Integer roleId : roleIds) {
+            roleId = n++;
+        }
+        this.roleIds = roleIds;
+    }
+
 }
