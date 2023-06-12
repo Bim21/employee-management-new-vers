@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 
 @Getter
 @Setter
@@ -33,6 +34,9 @@ public class CheckInOut {
 
     @Column(name = "check_out_time")
     private LocalDateTime checkOutTime;
+
+    @Column(name = "month")
+    private YearMonth month;
 
     @Column(name = "isError")
     private boolean isError;
