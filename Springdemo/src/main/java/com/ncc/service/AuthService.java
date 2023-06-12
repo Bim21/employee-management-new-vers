@@ -21,6 +21,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,6 +38,16 @@ public class AuthService implements IAuthService {
     private final IEmployeeRoleRepository employeeRoleRepository;
     private final IRoleRepository roleRepository;
     private final JwtUtils jwtUtils;
+
+    @PostConstruct
+    public void init(){
+        System.out.println("AuthService được khởi tạo.");
+    }
+
+    @PreDestroy
+    public void cleanup(){
+        System.out.println("AuthService bị hủy");
+    }
 
     @Override
     public ResponseEntity<?> registerUser(SignUpRequest signUpRequest) {
@@ -66,7 +78,7 @@ public class AuthService implements IAuthService {
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
-                    case "admin":
+                    case "ADMIN":
                         Role adminRole = roleRepository.findByRoleName(ERole.ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found"));
                         roles.add(adminRole);

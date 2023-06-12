@@ -3,7 +3,6 @@ package com.ncc.service;
 import com.ncc.constants.MessageConstant;
 import com.ncc.dto.CheckInOutDTO;
 import com.ncc.dto.EmployeeCheckInCheckOutDTO;
-import com.ncc.dto.EmployeeDTO;
 import com.ncc.dto.EmployeeResponseDTO;
 import com.ncc.entity.CheckInOut;
 import com.ncc.entity.Employee;
@@ -15,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -23,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +32,16 @@ public class CheckInOutService implements ICheckInOutService{
     private final ICheckInOutRepository checkInOutRepository;
     private final IEmployeeRepository employeeRepository;
     private final ModelMapper mapper;
+
+    @PostConstruct
+    public void init(){
+        System.out.println("CheckInOutService được khởi tạo.");
+    }
+
+    @PreDestroy
+    public void cleanup(){
+        System.out.println("CheckInOutService bị hủy");
+    }
     @Override
     public CheckInOutDTO checkIn(Integer employeeCode) {
         Employee employee = employeeRepository.findByEmployeeCode(employeeCode);

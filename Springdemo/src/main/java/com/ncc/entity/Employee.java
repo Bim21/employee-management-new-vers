@@ -20,10 +20,10 @@ public class Employee {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "first_name", length = 50, nullable = false)
+    @Column(name = "first_name", length = 50)
     private String firstName;
 
-    @Column(name = "last_name", length = 50, nullable = false)
+    @Column(name = "last_name", length = 50)
     private String lastName;
 
     @Column(name = "username", length = 50, unique = true)
@@ -41,6 +41,8 @@ public class Employee {
     @Column(name = "ACTIVE")
     private boolean active;
 
+    @Column(name = "role")
+    private ERole role;
     @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<EmployeeRole> employeeRoles;
 }

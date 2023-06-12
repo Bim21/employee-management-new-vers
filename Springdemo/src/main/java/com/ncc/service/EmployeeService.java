@@ -2,11 +2,11 @@ package com.ncc.service;
 
 import com.ncc.constants.MessageConstant;
 import com.ncc.dto.*;
-import com.ncc.entity.CheckInOut;
 import com.ncc.entity.ERole;
 import com.ncc.entity.Employee;
 import com.ncc.entity.EmployeeRole;
 import com.ncc.exception.NotFoundException;
+import com.ncc.mapper.EmployeeRequestMapper;
 import com.ncc.repository.ICheckInOutRepository;
 import com.ncc.repository.IEmployeeRepository;
 import com.ncc.repository.IEmployeeRoleRepository;
@@ -17,7 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDate;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,12 +26,21 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EmployeeService implements IEmployeeService {
     private final IEmployeeRepository employeeRepository;
-    private final ICheckInOutRepository checkInOutRepository;
     private final ModelMapper mapper;
     private final PasswordEncoder passwordEncoder;
     private final RestTemplate restTemplate;
     private final IRoleRepository roleRepository;
     private final IEmployeeRoleRepository employeeRoleRepository;
+//    private final EmployeeRequestMapper employeeRequestMapper;
+    @PostConstruct
+    public void init(){
+        System.out.println("EmployeeService được khởi tạo.");
+    }
+
+    @PreDestroy
+    public void cleanup(){
+        System.out.println("EmployeeService bị hủy");
+    }
     @Override
     public List<EmployeeResponseDTO> syncData(EmployeeRequestDTO employeeRequestDTO) {
         String employeeCode = generateEmployeeCode();
