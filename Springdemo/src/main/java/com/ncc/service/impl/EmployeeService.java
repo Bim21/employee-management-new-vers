@@ -2,29 +2,31 @@ package com.ncc.service.impl;
 
 import com.ncc.constants.MessageConstant;
 import com.ncc.dto.*;
+import com.ncc.entity.CheckInOut;
 import com.ncc.entity.ERole;
 import com.ncc.entity.Employee;
 import com.ncc.entity.EmployeeRole;
 import com.ncc.exception.NotFoundException;
-import com.ncc.mapper.EmployeeRequestMapper;
-import com.ncc.repository.ICheckInOutRepository;
 import com.ncc.repository.IEmployeeRepository;
 import com.ncc.repository.IEmployeeRoleRepository;
 import com.ncc.repository.IRoleRepository;
-import com.ncc.service.IEmployeeService;
 import com.ncc.service.IMailService;
+import com.ncc.service.IEmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.mail.MessagingException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Scope("prototype")
 @RequiredArgsConstructor
 public class EmployeeService implements IEmployeeService {
     private final IEmployeeRepository employeeRepository;
@@ -104,13 +106,13 @@ public class EmployeeService implements IEmployeeService {
                 ERole roleName = employeeRole.getRole().getRoleName();
                 roleNames.add(roleName);
             }
-            employeeResponseDTO.setRoleNames(roleNames);
+//            employeeResponseDTO.setRoleNames(roleNames);
             employeeResponseDTOList.add(employeeResponseDTO);
         }
         return employeeResponseDTOList;
     }
     @Override
-    public EmployeeResponseDTO createEmployee(EmployeeRequestDTO employeeRequestDTO) {
+    public EmployeeResponseDTO createEmployee(EmployeeRequestDTO employeeRequestDTO) throws MessagingException {
         String employeeCode = generateEmployeeCode();
         Employee employee = mapper.map(employeeRequestDTO, Employee.class);
         employee.setUserName(employee.getEmail().substring(0, employeeRequestDTO.getEmail().indexOf("@")));
@@ -118,7 +120,7 @@ public class EmployeeService implements IEmployeeService {
         employee.setEmployeeCode(Integer.valueOf(employeeCode));
         Employee saveEmployee = employeeRepository.save(employee);
         EmployeeResponseDTO saveEmployeeDTO = mapper.map(saveEmployee, EmployeeResponseDTO.class);
-        mailService.sendEmployeeCreationEmail(employee);
+        mailService.sendHtmlMessage(employee, employee.getPassword());
         return saveEmployeeDTO;
     }
 
@@ -147,11 +149,6 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Override
-    public void saveUser(List<Employee> employees) {
-        employeeRepository.saveAll(employees);
-    }
-
-    @Override
     public List<EmployeeResponseDTO> searchEmployeesByName(String keyword) {
         List<Employee> employees = employeeRepository.findByUserNameContainingIgnoreCase(keyword);
         return employees.stream()
@@ -159,9 +156,48 @@ public class EmployeeService implements IEmployeeService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<EmployeeResponseDTO> getAllEmployee() {
+        List<Employee> employees = employeeRepository.findAll();
+        List<EmployeeResponseDTO> employeeDTOs = new ArrayList<>();
+
+        for (Employee employee : employees) {
+            EmployeeResponseDTO dto = EmployeeResponseDTO.fromEntity(employee);
+            employeeDTOs.add(dto);
+        }
+
+        return employeeDTOs;
+    }
+
+
     private String generateEmployeeCode() {
         Random random = new Random();
         int code = random.nextInt(9000) + 1000;
         return String.valueOf(code);
     }
+
+    @Override
+    public List<CheckInOutDTO> getCheckInOutsByEmployeeId(int employeeId) {
+        Employee employee = employeeRepository.findById(employeeId).orElse(null);
+
+        if (employee != null) {
+            List<CheckInOut> checkInOuts = employee.getCheckInOuts();
+
+            List<CheckInOutDTO> checkInOutDTOs = new ArrayList<>();
+            for (CheckInOut checkInOut : checkInOuts) {
+                CheckInOutDTO dto = new CheckInOutDTO();
+                dto.setEmployeeId(checkInOut.getId());
+                dto.setCheckInTime(checkInOut.getCheckInTime());
+                dto.setCheckOutTime(checkInOut.getCheckOutTime());
+                // ...
+                checkInOutDTOs.add(dto);
+            }
+
+            return checkInOutDTOs;
+        } else {
+            throw new NotFoundException("Employee not found with ID: " + employeeId);
+        }
+    }
+
+
 }

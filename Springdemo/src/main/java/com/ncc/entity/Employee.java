@@ -41,7 +41,9 @@ public class Employee {
     @Column(name = "ACTIVE")
     private boolean active;
 
-    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<EmployeeRole> employeeRoles;
 
+    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<CheckInOut> checkInOuts;
 }

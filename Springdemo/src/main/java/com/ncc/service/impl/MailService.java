@@ -1,95 +1,81 @@
 package com.ncc.service.impl;
 
-import com.ncc.constants.MessageConstant;
 import com.ncc.dto.MailDTO;
 import com.ncc.entity.Employee;
 import com.ncc.service.IMailService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileCopyUtils;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
-import javax.mail.Quota;
 import javax.mail.internet.MimeMessage;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class MailService implements IMailService {
-    private final JavaMailSender mailSender;
+    private final JavaMailSenderImpl mailSender;
+    private final MailDTO mailDTO;
     private final SpringTemplateEngine templateEngine;
-    private final Environment env;
 
     @Override
-    public String sendmail(MailDTO mailDTO) throws MessagingException {
+    public String sendSimpleMail(String code, String emailTo) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-
-            message.setFrom(env.getProperty("spring.mail.username"));
-            message.setTo(mailDTO.getSubject());
-            message.setText(mailDTO.getContent());
+            message.setFrom("chien.nguyenvan@ncc.asia");
+            message.setTo(emailTo);
+            if (code.length() == 4) {
+                message.setSubject("Welcome to the company");
+                message.setText("Your code is: " + code);
+            } else {
+                message.setSubject("Notification");
+                message.setText(code);
+            }
             mailSender.send(message);
-            return MessageConstant.SEND_MAIL_DONE;
-
+            return "Mail Sent Successfully...";
         } catch (Exception e) {
-            return MessageConstant.SEND_MAIL_FAIL;
+            e.printStackTrace();
+            return "Error while Sending Mail";
         }
     }
 
+    @Async
     @Override
-    public String sendMailWithHTML(MailDTO mailDTO, String templateName) throws MessagingException {
+    public String sendHtmlMessage(Employee employee, String password) throws MessagingException {
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", "Chien");
+        map.put("subscriptionDate", new Date());
+        map.put("username", "chien.nguyen");
+        map.put("code", "2222");
+        map.put("password", "123456");
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("name", user.getFirstName());
+//        map.put("subscriptionDate", new Date());
+//        map.put("username", user.getUsername());
+//        map.put("code", user.getCode());
+//        map.put("password", password);
+//        map.put("company", messageSource.getMessage("company", null, lang));
+
         MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
+        MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
         Context context = new Context();
-        context.setVariables(mailDTO.getProps());
-        String html = templateEngine.process(templateName, context);
-        helper.setFrom(env.getProperty("spring.mail.username"));
-        helper.setTo(mailDTO.getTo());
-        helper.setSubject(mailDTO.getSubject());
+        context.setVariables(map);
+        helper.setFrom("chien.nguyenvan@ncc.asia");
+        helper.setTo("chiennguyen2198@gmail.com");
+        helper.setSubject("Welcome to the company");
+        String html = templateEngine.process("welcome.html", context);
         helper.setText(html, true);
-        try {
-            mailSender.send(message);
-            return MessageConstant.SEND_MAIL_DONE;
-        } catch (Exception e) {
-            return MessageConstant.SEND_MAIL_FAIL;
-        }
-    }
 
-    @Override
-    public void sendEmployeeCreationEmail(Employee employee) {
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-
-            String templateContent = getTemplateContent("welcome.html");
-
-            Context context = new Context();
-            context.setVariable("employeeName", employee.getFirstName());
-            context.setVariable("employeeCode", employee.getEmployeeCode());
-
-            String processedTemplate = templateEngine.process(templateContent, context);
-            helper.setText(processedTemplate, true);
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private String getTemplateContent(String templateName) {
-        Resource resource = new ClassPathResource(templateName);
-        try {
-            return FileCopyUtils.copyToString(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        mailSender.send(message);
+        return "Mail Sent Successfully...";
     }
 }
+

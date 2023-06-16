@@ -2,10 +2,7 @@ package com.ncc.dto;
 
 import com.ncc.entity.ERole;
 import com.ncc.entity.Employee;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -13,6 +10,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class EmployeeResponseDTO {
     private int Id;
     private String firstName;
@@ -20,7 +18,7 @@ public class EmployeeResponseDTO {
     private String fullName;
     private String email;
     private String employeeCode;
-    private List<ERole> roleNames;
+//    private List<ERole> roleNames;
     private List<CheckInOutDTO> checkInRecords;
     private List<CheckInOutDTO> checkOutRecords;
 
