@@ -1,0 +1,304 @@
+*java bean: là những class được thiết kế đặc biệt nhằm tăng tính sử dụng lại
+java bean thỏa mãn các y/c: các thuộc tính khai báo kiểu private, các phương thức getX,setX, isX, mặc địch luôn có một constructor không tham số
+
+*spring bean:
+    - là những java object tạo nên khung của một spring
+    - bất kì object nào đc khởi tạo bằng spring container đều là spring bean
+    - Spring cung cấp 3 cấu hình bean:
+        + Annotation Based Configuration: sử dụng @Component, @Service.
+        + XML Based Configuration:
+        + Java Based Configuration: một vài annotation sử dụng cho config dựa trên java là @Configuration, @Bean, @ComponentScan
+
+*Spring Component:
+    - các class được đánh dấu là @Component thì sẽ giúp Spring biết đó là một bean
+
+* so sánh sự khác nhau giữa @Bean và @Component:
+@Bean dùng để đánh dấu lên các method
+@Component dùng để đánh dấu lên class để giúp spring biết đó là một bean
+
+vd: như trong project: @service đc đánh dấu lên các class lưu trong package service để đánh dấu nó là một bean và
+sẽ đki và khởi tạo với application context. khi controller khai báo service như một dependency cần sử dụng, Spring sẽ tìm kiếm
+va tiêm service instance tương ứng vào để controller sử dụng.
+
+------------------------------------------------------------------------------------------------------------------------------------
+*Spring config và Spring Property
+
+    - Spring property:
+        + @PropertySource dùng để khai báo file config. nếu không có annotaion này, spring sẽ tự động sử dụng file application.properties
+
+        sử dụng @PropertySources({
+            @PropertySource("classpath:config.properties1")
+            @PropertySource("classpath:config.properties1")
+        })
+        có thể sử dụng @PropertySources để khai báo nhiều file config
+        + @Value là một annotation dùng để inject các giá trị khai báo trong file config vào trong các thuộc tính của Spring
+
+        + Ngoài ra chúng ta có thể sử dụng Enviroment để lấy giá trị trong file config
+
+* lấy vd sử dụng nhiều file config: (trong project đã sử dụng propertysource để lấy file config alpha,dev)
+ sử dụng value: có lấy trong file application.yml để syncdata nhưng đã thay đổi code và sử dụng restemplateconfig để lấy link syncdata
+ sử dụng enviroment: chưa có ví dụ cụ thể.
+
+*Spring config:
+    - java based Configuration:
+    - @Configuration: dùng để đánh dấu lên class cho phép Spring biết class này sẽ dùng để định nghiã ra các bean
+    - @Bean: đánh dấu trên các method để Spring biết được đây là bean và sẽ đưa bean vào context.
+    - @Bean sẽ nằm trong @Configuration.
+
+    ** Cách hoạt động của @Configuration và @Bean:
+        - ở lần đầu khởi chạy, Spring ngoài vieecj tìm các @Component, Spring sẽ tìm các class có đánh dấu @Configuration
+        - tạo ra đối tượng từ class có đánh dấu @Configuration.
+        - tìm cac method có đánh dấu @Bean trong đối tượng vừa tạo.
+        - Thực hiện gọi các method có đánh dấu @Bean và đưa vào context.
+
+    - tính quan trọng của @Configuration:
+        + không chỉ dùng để cấu hình bean. Trong một chương trình ta còn có thể sử dụng nhiều class đánh dấu @Configuration
+        mỗi class sẽ đảm nhận cấu hình một cái gi đó trong ứng dụng.
+
+------------------------------------------------------------------------------------------------------------------------------
+*Ioc Container và DI
+    - Ioc Container: kế thừa những đặc trưng của Ioc. giúp ta quản lý các bean, từ lúc khởi tạo, quản lý vòng đời, cho đến lúc bean bị hủy.
+    (vậy Ioc là gi? Inversion of controller: đảo ngược sự điều khiển, là một nguyên tắc lập trình chuyển quyền quản lý các object cho Context)
+    - Ioc Container sử dụng DI (Dependency Injection) để quản lý các thành phần tạo nên ứng dụng.
+    các thành phần đó gọi là Spring Bean.
+
+    - DI là gì? là một phương pháp lập trình cho phép loại bỏ các phần phụ thuộc:
+    ta có thể hiểu như là:
+    các class sẽ không giao tiếp trực tiếp với nhau mà giao tiếp nhau thông qua interface.
+    Một class cấp cao hơn sẽ gọi class cấp thấp hơn thoog qua interface.
+    - Việc khởi tạo các module cấp thấp sẽ do Ioc Container thực hiện.
+    - DI được dùng để giảm các sự phụ thuộc giữa các module, dễ dàng hơn trong việc thay đổi các module, bảo trì code, testing
+    - Các dạng DI:
+        + constructor injection:
+        + setter injection:
+        + filed-based injection:
+
+    (Tại sao nên dùng Constructor Injection?)
+    - IoC Container đảm bảo rằng tất cả các đối số được cung cấp trong constructor đều khả dụng trước khi chuyển chúng vào constructor.
+    điều này giúp ngăn chặn nullpointerException.
+    - Constructor injection giúp ta tạo các immutable object
+    khi ta tạo một bean thì ta không thể thay đổi phụ thuộc của nó nữa.
+
+    (Trong project cũng đã có dùng constructor injection)
+    @RequiredConstrutor: sử dụng để khởi tạo constructor khi inject dependency
+
+    SpringApplication.run(App.class, args) chính là câu lệnh để tạo ra container. Sau đó nó sẽ tìm toàn bộ
+    các dependency trong project và đưa vào đó.
+    Spring đặt tên cho container là ApplicationContext
+    và đặt tên cho các dependency là bean.
+------------------------------------------------------------------------------------------------------------------------------
+*Bean Scopes và Bean Life Cycle
+
+    - Bean Scopes: Phạm vị hoạt động của bean sẽ có 5 scopes
+        + Singleton: đây là default scope của Spring.
+            Chỉ duy nhất một instance của bean sẽ đc khởi tạo trong container.
+        + Prototype: Một instance của bean được tạo cho mỗi lần được yêu cầu(request)
+        + Request: nó dùng cho ứng dụng web, một instance của bean sẽ được tạo cho mỗi HTTP request.
+        + Session: Mỗi instance của bean sẽ được tạo cho mỗi HTTP Session.
+        + Global-Session: Được sử dụng để tạo global session bean cho các ứng dụng Porlet
+
+    (Ví dụ về Bean Scope? chưa có)
+    - Bean Life Cycle:
+        + Khi Ioc Container (Application Context) tìm thấy bean cần quản lý, nó sẽ khởi tạo bằng constructor
+        + Hàm đánh dấu @PostConstruct được gọi
+        + Tien xử lý sau khi @PostConstruct được gọi
+        + Bean sẵn sàng hoạt động.
+        + Nếu Ioc Container không quản lý bean nữa hoặc bị shutdown thì nó sẽ gọi hàm @PreDestroy trong Bean
+        + Xóa Bean.
+
+     (Ví dụ về Bean Life Cycle? đã có)
+
+------------------------------------------------------------------------------------------------------------------------------
+*Entity, ORM, RelationShip, fetch type (LAZY, EAGER): cần phân biệt các loại cascade, fetchtype, relationShip
+
+- Entity là đối tượng tương ưứng với 1 table trong cơ sở dữ liệu.
+- các annotation hay sử dụng trong Entity
+    + @Entity: để đánh dấu 1 class là một entity. Một entity sẽ khớp với 1 bảng trong csdl nên lấy tên theo thứ tự ưu tiên là:
+    name trong @Table, @Entity, name của class
+    + @Table: cho phép chú thích tên bảng thông qua thuộc tính name
+    + @Column: chú thích thuộc tính khớp với 1 cột trong bảng trong csdl. chú thích thông qua thuộc tính name.
+    nếu không dùng thuộc tính name thì Spring sẽ tự động lấy tên thuộc tính để đặt tên bảng.
+    Trong Column sẽ còn có các thuộc tính khác như length dùng để xác định kích thước của cột, mặc định la 255.
+    nullable: trường dữ liệu đc null hay k. true: có, false: không.
+    unique: trường dữ liệu độc lập, duy nhất. true: có, false: không
+    + @Id: dùng để xác định khóa chính
+- ORM: là một kỹ thuật/ cơ chế lập trình thực hiện ánh xạ CSDL sang các đối tượng
+- RelationShip:
+    + @OneToMany:  thể hiện mối quan hệ 1 - N. đảo ngược của @ManyToOne
+    + @ManyToOne: thường đc sử dụng với @JoinColumn. Thể hiện mối quan hệ 1 - N
+    + @OneToOne: thể hiện mqh 1 - 1.
+    + @ManyToMany: N - N.
+
+- Fetch Type: LAZY vs EAGER
+    + chỉ tải dữ liệu khi được gọi.
+    + tải tất cả các dữ liệu từ các đối tượng liên quan
+- Cascade:
+    + là một tính năng giúp quản lý trạng thái của các đối tươnng trong một mối quan hệ
+    một cách tự động.
+    + Khi nào sử dụng cascade?
+        Ta sẽ sử dụng cascade trong các trường hợp dữ liệu tham chiếu ít, các dữ liệu tham chiếu
+       chỉ có ý nghĩa khi gắn liền với đối tượng tham chiếu.
+
+       VD: người có nhiều tên(các tên đó chỉ gắn với người đó), thì khi xóa người đó đi thì ta sẽ xóa luôn các tee
+
+    các loại cascade:
+        ALL: tương ứng với tất cả các loại cascade.cascade={DETACH, MERGE, PERSIST, REFRESH, REMOVE}
+        DETACH: nếu đối tượng cha bị detached khỏi persistence context thì các đối tượng tham chiếu tới nó cũng bị detached.
+        MERGE: Nếu đối tượng cha được merged vào persistence context, thì các đối tượng tham chiếu tới nó cũng được merged.
+        PERSIST: Nếu đối tượng cha được persisted vào persistence context, thì các đối tượng tham chiếu tới nó cũng được persisted.
+        REFRESH: Nếu đối tượng cha được refreshed vào persistence context, thì các đối tượng tham chiếu tới nó cũng được refreshed.
+        REMOVE: Nếu đối tượng cha được removed vào persistence context, thì các đối tượng tham chiếu tới nó cũng được removed.
+
+        detached: tách ra, merged: sáp nhập, persisted: kiên trì, cố chấp, refreshed: làm mới, removed: xóa
+    (ví dụ về cascade? chưa có)
+    (ví dụ về fetchType? đã có ở trong project khi lấy ra danh sach check in check out của từng nhân viên
+    sẽ hiển thị ở phần runtime các câu lệnh truy vấn)
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Controller, HTTP Methods(POST,GET,PUT,DELETE)
+
+- @Controller và @RestController
+    - @Controller: thường hay đc sử dụng cho Spring Controller truyền thống
+    neeus muốn sử dụng @Controller để tạo ra các RESTful API thì ta sẽ sử dụng thêm
+    annotation @ResponseBody
+    - @RestController: là sự kết hợp giữ @Controller và @ResponseBody. giúp đơn giản hóa việc tạo ra RESTful API
+
+- HTTP Methods
+    + POST và @PostMapping:
+    POST là một HTTP Methods, nó có chức năng là gửi các biểu mẫu HTTP
+
+    @PostMapping đánh dấu hàm xu lý POST request trong Controller
+
+    + GET và @GetMapping:
+    GET là một HTTP Methods được sử dụng để lấy lại thông tin từ server đã cung cấp
+    bởi sử dụng một URI đã cung cấp. Các yêu cầu sử dụng GET chỉ nhận dữ liệu và ko có ảnh hưởng gì tới dữ liệu.
+
+    @GetMapping đánh dấu hàm xử lý GET request trong Controller
+
+    + PUT và @PutMapping:
+    PUT thay đổi tất cả các đại diện hiện tại của nguồn mục tiêu với nội dung được tải lên
+
+    @PutMapping đánh dấu hàm xử lý PUT request trong Controller
+
+    + DELETE và @DeleteMapping
+    DELETE Gỡ bỏ tất cả các đại diện hiện tại của nguồn mục tiêu bởi URI
+
+    @DeleteMapping đánh dấu hàm xử lý DELETE request trong Controller
+
+** Các thành phần request,response, các annotation của request và response
+    - các thành phần của request:
+        + HTTP Method: Biểu thị hành động mà client yêu cầu từ server, như GET,POST,PUT,DELET
+        + URL: địa chỉ tài nguyên mà client muốn truy cập
+        + Headers:Các thông tin bổ sung về request: như Content-Type, Authorization, v.v.
+        + Parameters: Các thông số truyền trong URL hoặc trong phần body của request.
+        + Body: Nội dung của request, thường đc sử dụng trong các phung thức như POST, PUT để gửi dữ liệu.
+
+    - các annotation quan trọng và hay gặp:
+        + @GetMapping, @PostMapping, @PutMapping, @DeleteMapping.
+        + @RequestMapping: có nhiệm vụ ánh xạ cá request vào method tương ứng trong controller
+        + @PathVariable: đc sử dụng để xử lý những URI động, có một hoặc nhiều parameter trên URI
+        + @RequestParam: dùng để bắt các giá trị các tham số mà người dùng truyền vào trên url theo định dạng key và value
+        + @RequestBody: đc sử dụng để lấy các giá trị mà người dùng gửi len server mà các giá trị đó đc chứa
+        trong phần body của request.
+        + @RequestHeader: đc sử dụng khi ta muốn lấy dữ liệu đc truyền bằng Header của một request(yêu cầu từ client)
+
+    (@PathVariable và @RequestParam có gì khác nhau?)
+    giống nhau là đều đc sử dụng để lấy gia trị tu request URL hoặc query parameters
+    khác nhau:
+    @PathVariable:
+        - Sử dụng để trích xuất dữ liệu từ URL path
+
+    @RequestParam:
+        - Sử dụng để trích xuất dữ liệu từ request query
+
+    (Ta có thể dùng phương thức @Post để get dữ liệu về không?)
+    phương thức Get và Post đều là 2 phương thức của giao thức HTTP
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Authentication vs Authorization:
+
+Authen xác định danh tính để cấp quyền truy cập
+Author phân quyền truy cập
+
+Authen xác nhận thông tin đăng nhập để có quyền truy cập của người dùng
+Author xác minh xem cos cho phép hay không
+
+Authen quyết định liệu user có đúng như những gì user tuyên bố hay không
+Author xác định những gì user có thể hoặc ko thể truy cập
+
+Authen thường yêu cầu username và password
+Author cần các yếu tố xác thực khc nhau, tùy vào mức độ bảo mật
+
+Authen là bước đầu của Author
+Author đc thực thi sau khi authen thành công
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Spring Security, UserService
+    - Spring Security là một trong những core feature quan trọng của Spring Framework,
+    nó giúp chúng ta phân quyên và xác thực người dùng trước khi cho phép họ truy cập vào các tài nguyên của chúng ta.
+    - Spring Security cung cấp 2 cơ chế cơ bản:
+        + Authentication
+        + Authorization
+    - Các thành phần của Spring Security:
+        + SecurityContext:
+            là interface cốt lõi của Spring Security, lưu trữ tất cả các chi tiết liên quan đến bảo mật trong ứng dụng.
+            Khi ta kích hoạt Spring Security trong ứng dụng thì SecurityContext cũng sẽ đc kích hoạt theo.
+         Chúng ta sẽ không truy cập trực tiếp vào SecurityContext, thay vào đó sẽ sử dụng lớp SecurityContextHolder.
+         Lớp này lưu trữ SecurityContext hiện tại của ứng dụng, bao gồm chi tiết của principal.
+
+    - UserDetails: là một interface cốt lõi của Spring Security. Nó đại diện cho một principal nhưng theo một cách
+    mở rộng và cụ thể hơn. UserDetails bao gồm các method sau:
+        + getAuthorities(): trả về danh sách các quyền của người dùng.
+        + getPassword(): trả về password đã dùng trong quá trình xác thực.
+        + getUsername(): trả về username đã dùng trong quá trình xác thực.
+        + isAccountNonExpired(): trả về true nếu tài khỏoản của người dùng chưa hết hạn
+        + isAccountNonLocked(): trả về true nếu người dùng chưa bị khóa
+        + isCredentialsNonExpired(): trả về true nếu chứng thực (mật khẩu) của người dùng chưa hết hạn.
+        + isEnabled(): trả về true nếu người dùng đã được kích hoạt UserDetails mới chỉ cung cấp các phương thức để truy cập các thông tin cơ bản của ng dùng.
+
+    - UserDetailsService: là 1 interface có duy nhất một phương thức
+        loadUserByUsername()
+        tham số truyền vào chỉ gồm có username của người dùng. Ta sẽ tìm kiếm trong CSDL,
+        record thỏa mãn username. Nếu không tìm thầy, ta sẽ ném ra ngoại lệ UsernameNotFoundException.
+
+        Phương thức loadUserByUsername() sẽ trả về một implementation của UserDetails
+
+    - JWT(Json web Token) là một chuỗi mã hóa đc gửi kèm trong Header của client request có tác dụng
+    giúp phía server xác thực request người dùng có hợp lệ hay không.
+    - Thông tin có thể đuược xác thực và đánh dấu tin cậy nhờ vào "chữ ký" của nó.
+    - Phần chữ ký của JWT sẽ được mã hóa lại bằng RSA hoặc HMAC
+
+    - JWT gồm 3 phần:
+        + Header: chứa thuật toán dùng để mã hóa
+        + Payload: chứa nội dung thông tin bao gồm issuer, subject, audience, expired time
+            + issuer: tổ chức phát hành token (không bắt buộc)
+            + subject: chủ đề của token (không bắt buộc)
+            + audience: đối tượng sử dụng token
+            + expired token: token sẽ chưa hợp lệ trước thời điểm này
+            + issued at: thời điểm token đc phát hành, tính theo UNIX time
+            + jti: JWT ID
+        + Signature: phần chữ ký được tạo bằng kết hợp giữa 2 phần Header và Payload, sau đó đc mã hóa bằng thuật toán đã khai báo ở phần Header
+
+    - Nguyên lý hoạt động:
+        + User thực hiện login bằng cách gửi id/password hay sử dụng các tài khoản mạng xã hội
+        lên phía Authentication Server (Server xác thực)
+        + Authentication Server tiếp nhận các dữ liệu mà User gửi lên để phục vụ cho việc xác thực người dùng.
+        Trong trường hợp thành công, Authentication Server sẽ tạo một JWT và trả về cho người dùng thông qua response.
+        + Người dùng nhận đc JWT do Authentication Server vừa mới trả về lm "chìa khóa" để thực hiện các "lệnh" tiếp theo
+        đối vơ Application Server.
+        + Application Server trước khi thực hiện yêu cầu được gọi từ phía User, sẽ verify JWT gửi lên.
+        Nếu OK, tiếp tục thực hiện yêu cầu được gọi.
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+*Scheduler/Cronjob
+    - @Scheduled là một annotation sử dụng để cấu hình 1 lịch trình(Schedule), nó đc gắn trên một phương thức, và phương thức này sẽ được
+    chạy theo lịch đc cấu hình bởi @Scheduled.
+    - Để bật tính năng Scheduler, cần đặt @EnableScheduling annotation trong Config
+
+
+
+

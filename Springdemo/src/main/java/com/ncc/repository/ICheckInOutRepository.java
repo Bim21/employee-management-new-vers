@@ -6,12 +6,14 @@ import com.ncc.entity.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.List;
 
+@Repository
 public interface ICheckInOutRepository extends JpaRepository<CheckInOut, Integer> {
     boolean existsByEmployeeAndCheckOutTimeIsNull(Employee employee);
 
@@ -26,5 +28,5 @@ public interface ICheckInOutRepository extends JpaRepository<CheckInOut, Integer
     @Query("SELECT cio FROM CheckInOut cio WHERE cio.employee = :employee AND MONTH(cio.date) = :month AND cio.checkInTime > :checkInTimeThreshold")
     List<CheckInOut> findLateCheckInsByMonth(@Param("employee") Employee employee, @Param("month") int month, @Param("checkInTimeThreshold") LocalTime checkInTimeThreshold);
 
-
+    List<CheckInOut> findByEmployee(Employee employee);
 }
