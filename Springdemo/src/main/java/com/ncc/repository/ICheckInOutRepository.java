@@ -3,6 +3,8 @@ package com.ncc.repository;
 import com.ncc.dto.CheckInOutDTO;
 import com.ncc.entity.CheckInOut;
 import com.ncc.entity.Employee;
+import com.ncc.projection.CheckInOutProjection;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,14 +21,13 @@ public interface ICheckInOutRepository extends JpaRepository<CheckInOut, Integer
 
     CheckInOut findByEmployeeAndCheckOutTimeIsNull(Employee employee);
 
-    List<CheckInOutDTO> findByEmployeeIdAndDateBetween(Employee id, LocalDate startDate, LocalDate endDate);
+    //    @Query(value = "SELECT * FROM check_in_out WHERE employee_id = :employeeId AND date BETWEEN :startDate AND :endDate", nativeQuery = true)
+//    List<CheckInOut> findByEmployeeAndDateBetweenNative(Integer employeeId, LocalDate startDate, LocalDate endDate);
+    @Query(value = "SELECT check_in_time, check_out_time FROM check_in_out WHERE employee_id = :employeeId AND date BETWEEN :startDate AND :endDate", nativeQuery = true)
+    List<CheckInOutProjection> findCheckInOutByEmployeeAndDateBetween(@Param("employeeId") Integer employeeId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-    List<CheckInOutDTO> findCheckInErrorsByEmployeeAndMonth(Employee employee, YearMonth yearMonth);
+    @Cacheable("checkInOutErrors")
+    @Query("SELECT c FROM CheckInOut c WHERE c.employee = :employee AND YEAR(c.checkInTime) = :year AND MONTH(c.checkInTime) = :month AND c.isError = true")
+    List<CheckInOut> findErrorCheckInsByEmployeeAndMonth(@Param("employee") Employee employee, @Param("year") int year, @Param("month") int month);
 
-    List<CheckInOut> findByDateBetween(LocalDate startDate, LocalDate endDate);
-
-    @Query("SELECT cio FROM CheckInOut cio WHERE cio.employee = :employee AND MONTH(cio.date) = :month AND cio.checkInTime > :checkInTimeThreshold")
-    List<CheckInOut> findLateCheckInsByMonth(@Param("employee") Employee employee, @Param("month") int month, @Param("checkInTimeThreshold") LocalTime checkInTimeThreshold);
-
-    List<CheckInOut> findByEmployee(Employee employee);
 }

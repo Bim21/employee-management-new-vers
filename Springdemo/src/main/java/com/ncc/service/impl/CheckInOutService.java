@@ -9,6 +9,7 @@ import com.ncc.entity.Employee;
 import com.ncc.exception.CheckInException;
 import com.ncc.exception.CustomExceptionHandler;
 import com.ncc.exception.NotFoundException;
+import com.ncc.projection.CheckInOutProjection;
 import com.ncc.repository.ICheckInOutRepository;
 import com.ncc.repository.IEmployeeRepository;
 import com.ncc.service.ICheckInOutService;
@@ -78,5 +79,28 @@ public class CheckInOutService implements ICheckInOutService {
         CheckInOut saveCheckInOut = checkInOutRepository.save(checkInOut);
         return mapper.map(saveCheckInOut, CheckInOutDTO.class);
     }
+
+    @Override
+    public List<CheckInOutProjection> getCheckInOutByEmployeeAndDateRange(Integer employeeId, LocalDate startDate, LocalDate endDate) {
+        if (startDate == null) {
+            startDate = LocalDate.now().with(DayOfWeek.MONDAY); // Tuần hiện tại từ thứ 2
+        }
+        if (endDate == null) {
+            endDate = startDate.plusDays(6); // Tuần hiện tại đến chủ nhật
+        }
+        return checkInOutRepository.findCheckInOutByEmployeeAndDateBetween(employeeId, startDate, endDate);
+    }
+
+    @Override
+    public List<CheckInOut> getErrorCheckInsByEmployeeAndMonth(Integer employeeId, int year, int month) {
+        Employee employee = new Employee();
+        employee.setId(employeeId);
+        return checkInOutRepository.findErrorCheckInsByEmployeeAndMonth(employee, year, month);
+    }
+
+//    @Override
+//    public List<CheckInOut> getCheckInOutListByEmployeeIdAndDateRange(Integer employeeId, LocalDate startDate, LocalDate endDate) {
+//        return checkInOutRepository.findByEmployeeAndDateBetweenNative(employeeId, startDate, endDate);
+//    }
 
 }

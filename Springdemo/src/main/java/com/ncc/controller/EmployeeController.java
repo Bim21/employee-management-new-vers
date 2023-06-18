@@ -61,7 +61,7 @@ public class EmployeeController {
         return employeeService.getCheckInOutsByEmployeeId(employeeId);
     }
 
-    @GetMapping("/checkInOuts")
+    @GetMapping("/admin/checkInOuts")
     public List<EmployeeResponseDTO> getEmployeesWithCheckInOuts(
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate
@@ -69,7 +69,7 @@ public class EmployeeController {
         return employeeService.getEmployeesWithCheckInOuts(startDate, endDate);
     }
 
-    @GetMapping("/without-checkinout")
+    @GetMapping("/admin/without-checkinout")
     public List<Employee> getEmployeesWithoutCheckInOut() {
         return employeeService.getEmployeesWithoutCheckInOut();
     }
