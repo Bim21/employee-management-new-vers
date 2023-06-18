@@ -152,17 +152,6 @@ public class CheckInOutService implements ICheckInOutService {
         return result;
     }
 
-    @Override
-    public List fillAllTimkeepingByEMP(Integer employeeCode, Date dateFrom, Date dateTo) {
-        List<EmployeeResponseDTO> list = employeeRepository.findCheckInOutByEmployeeCodeBetweenDate(employeeCode, dateFrom, dateTo);
-        if(!list.isEmpty()){
-            return list;
-        } else {
-            throw new NotFoundException(MessageConstant.EMPLOYEE_IS_NULL);
-        }
-    }
-
-
 //
 //    @Override
 //    public List<EmployeeCheckInCheckOutDTO> getLateCheckInsByMonth(int month, LocalTime checkInTimeThreshold) {

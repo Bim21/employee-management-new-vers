@@ -7,6 +7,7 @@ import com.ncc.entity.ERole;
 import com.ncc.entity.Employee;
 import com.ncc.entity.EmployeeRole;
 import com.ncc.exception.NotFoundException;
+import com.ncc.repository.ICheckInOutRepository;
 import com.ncc.repository.IEmployeeRepository;
 import com.ncc.repository.IEmployeeRoleRepository;
 import com.ncc.repository.IRoleRepository;
@@ -22,6 +23,10 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.mail.MessagingException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,16 +41,19 @@ public class EmployeeService implements IEmployeeService {
     private final IRoleRepository roleRepository;
     private final IEmployeeRoleRepository employeeRoleRepository;
     private final IMailService mailService;
-//    private final EmployeeRequestMapper employeeRequestMapper;
+    private final ICheckInOutRepository checkInOutRepository;
+
+    //    private final EmployeeRequestMapper employeeRequestMapper;
     @PostConstruct
-    public void init(){
+    public void init() {
         System.out.println("EmployeeService được khởi tạo.");
     }
 
     @PreDestroy
-    public void cleanup(){
+    public void cleanup() {
         System.out.println("EmployeeService bị hủy");
     }
+
     @Override
     public List<EmployeeResponseDTO> syncData(EmployeeRequestDTO employeeRequestDTO) {
 
@@ -66,17 +74,20 @@ public class EmployeeService implements IEmployeeService {
         List<String> emailDTOList = employeeDTOList.stream()
                 .map(EmployeeDTO::getEmail)
                 .collect(Collectors.toList());
-        for (EmployeeDTO employeeDTO : employeeDTOList){
-            if(emailListGet.isEmpty() || !emailListGet.contains(employeeDTO.getEmail())){
+        for (EmployeeDTO employeeDTO : employeeDTOList) {
+            int numberOfEmployees = employeeList.size();
+            int numberOfFakeCheckIns = numberOfEmployees;
+            if (emailListGet.isEmpty() || !emailListGet.contains(employeeDTO.getEmail())) {
                 Employee employee = mapper.map(employeeDTO, Employee.class);
                 employee.setUserName(employeeDTO.getEmail().substring(0, employeeDTO.getEmail().indexOf("@")));
                 employee.setPassword(passwordEncoder.encode(employeeRequestDTO.getPassword()));
                 String employeeCode = generateEmployeeCode();
                 employee.setEmployeeCode(Integer.valueOf(employeeCode));
                 employee = employeeRepository.save(employee);
+                createFakeCheckInsAndCheckOuts(employee.getId(), numberOfFakeCheckIns);
                 List<EmployeeRole> employeeRoles = new ArrayList<>();
                 employeeRequestDTO.setRoleIds(Arrays.asList()); // Gán danh sách các roleId vào
-                for(int roleId : employeeRequestDTO.getRoleIds()){
+                for (int roleId : employeeRequestDTO.getRoleIds()) {
                     EmployeeRole employeeRole = new EmployeeRole();
                     employeeRole.setEmployee(employeeRepository.getById(employee.getId()));
                     employeeRole.setRole(roleRepository.getById(roleId));
@@ -88,21 +99,22 @@ public class EmployeeService implements IEmployeeService {
             }
         }
         employeeRepository.saveAll(employeeList);
-        for(Employee employee: employeeListGet){
-            if(!emailDTOList.contains(employee.getEmail())){
+        for (Employee employee : employeeListGet) {
+            if (!emailDTOList.contains(employee.getEmail())) {
                 employee.setActive(false);
                 employeeRepository.save(employee);
             }
         }
-            return getEmployeeResponseDTOS(employeeList);
+        return getEmployeeResponseDTOS(employeeList);
     }
-    private List<EmployeeResponseDTO> getEmployeeResponseDTOS(List<Employee> employeeList){
+
+    private List<EmployeeResponseDTO> getEmployeeResponseDTOS(List<Employee> employeeList) {
         List<EmployeeResponseDTO> employeeResponseDTOList = new ArrayList<>();
-        for (Employee employee: employeeList) {
+        for (Employee employee : employeeList) {
             EmployeeResponseDTO employeeResponseDTO = mapper.map(employee, EmployeeResponseDTO.class);
             employeeResponseDTO.setFullName(employee.getLastName() + " " + employee.getFirstName());
             List<ERole> roleNames = new ArrayList<>();
-            for (EmployeeRole employeeRole: employee.getEmployeeRoles()) {
+            for (EmployeeRole employeeRole : employee.getEmployeeRoles()) {
                 ERole roleName = employeeRole.getRole().getRoleName();
                 roleNames.add(roleName);
             }
@@ -111,6 +123,7 @@ public class EmployeeService implements IEmployeeService {
         }
         return employeeResponseDTOList;
     }
+
     @Override
     public EmployeeResponseDTO createEmployee(EmployeeRequestDTO employeeRequestDTO) throws MessagingException {
         String employeeCode = generateEmployeeCode();
@@ -120,7 +133,8 @@ public class EmployeeService implements IEmployeeService {
         employee.setEmployeeCode(Integer.valueOf(employeeCode));
         Employee saveEmployee = employeeRepository.save(employee);
         EmployeeResponseDTO saveEmployeeDTO = mapper.map(saveEmployee, EmployeeResponseDTO.class);
-        mailService.sendHtmlMessage(employee, employee.getPassword());
+//        mailService.sendHtmlMessage(employee, employee.getPassword());
+        mailService.sendWelcomeEmail(employee);
         return saveEmployeeDTO;
     }
 
@@ -175,6 +189,51 @@ public class EmployeeService implements IEmployeeService {
         int code = random.nextInt(9000) + 1000;
         return String.valueOf(code);
     }
+    public void createFakeCheckInsAndCheckOuts(int employeeId, int numberOfFakeCheckIns) {
+        Employee employee = employeeRepository.getById(employeeId);
+        for (int i = 0; i < numberOfFakeCheckIns; i++) {
+            LocalDate fakeDate = generateFakeDate(employeeId);
+            LocalDateTime fakeCheckInTime = generateFakeCheckInTime(fakeDate);
+            LocalDateTime fakeCheckOutTime = generateFakeCheckOutTime(fakeCheckInTime);
+
+            // Tạo bản ghi check-in và check-out giả cho nhân viên
+            CheckInOut checkIn = new CheckInOut();
+            checkIn.setEmployee(employee);
+            checkIn.setDate(fakeCheckInTime.toLocalDate());
+            checkIn.setCheckInTime(fakeCheckInTime);
+
+            CheckInOut checkOut = new CheckInOut();
+            checkOut.setEmployee(employee);
+            checkOut.setDate(fakeCheckOutTime.toLocalDate());
+            checkOut.setCheckOutTime(fakeCheckOutTime);
+
+            // Lưu bản ghi check-in và check-out vào cơ sở dữ liệu
+            checkInOutRepository.save(checkIn);
+            checkInOutRepository.save(checkOut);
+        }
+    }
+
+    private LocalDate generateFakeDate(int employeeId) {
+        // Sử dụng ID của nhân viên để tạo ngày giả
+        LocalDate baseDate = LocalDate.of(2023, 1, 1); // Ngày cơ sở
+        int daysToAdd = employeeId % 365; // Số ngày cần thêm dựa trên ID của nhân viên
+        return baseDate.plusDays(daysToAdd);
+    }
+    private LocalDateTime generateFakeCheckInTime(LocalDate date) {
+        // Tạo ngẫu nhiên giờ checkin trong khoảng thời gian từ 8:00 đến 9:00
+        LocalTime fakeCheckInTime = LocalTime.of(8, 0)
+                .plusMinutes(new Random().nextInt(60));
+
+        return LocalDateTime.of(date, fakeCheckInTime);
+    }
+
+    private LocalDateTime generateFakeCheckOutTime(LocalDateTime checkInTime) {
+        // Tạo ngẫu nhiên giờ checkout sau giờ checkin từ 1 đến 9 tiếng
+        LocalTime fakeCheckOutTime = checkInTime.toLocalTime()
+                .plusHours(1 + new Random().nextInt(9));
+
+        return LocalDateTime.of(checkInTime.toLocalDate(), fakeCheckOutTime);
+    }
 
     @Override
     public List<CheckInOutDTO> getCheckInOutsByEmployeeId(int employeeId) {
@@ -199,5 +258,34 @@ public class EmployeeService implements IEmployeeService {
         }
     }
 
+    @Override
+    public List<EmployeeResponseDTO> getEmployeesWithCheckInOuts(LocalDate startDate, LocalDate endDate) {
+        final LocalDate start = startDate != null ? startDate : LocalDate.now().with(DayOfWeek.MONDAY);
+        final LocalDate end = endDate != null ? endDate : LocalDate.now();
 
+        List<Employee> employees = employeeRepository.findAll();
+        List<EmployeeResponseDTO> employeeDTOs = new ArrayList<>();
+
+        for (Employee employee : employees) {
+            List<CheckInOut> checkInOuts = employee.getCheckInOuts().stream()
+                    .filter(checkInOut ->
+                            checkInOut.getDate().isAfter(start.minusDays(1)) &&
+                                    checkInOut.getDate().isBefore(end.plusDays(1))
+                    )
+                    .collect(Collectors.toList());
+
+            EmployeeResponseDTO employeeResponseDTO = new EmployeeResponseDTO(employee, checkInOuts);
+            employeeDTOs.add(employeeResponseDTO);
+        }
+
+        return employeeDTOs;
+    }
+
+    @Override
+    public List<Employee> getEmployeesWithoutCheckInOut() {
+        return employeeRepository.getEmployeesWithoutCheckInOut();
+    }
 }
+
+
+

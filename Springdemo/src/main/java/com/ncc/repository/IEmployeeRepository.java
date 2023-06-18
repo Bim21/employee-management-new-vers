@@ -3,6 +3,7 @@ package com.ncc.repository;
 import com.ncc.dto.EmployeeResponseDTO;
 import com.ncc.entity.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -19,5 +20,7 @@ public interface IEmployeeRepository extends JpaRepository<Employee, Integer> {
     boolean existsEmployeeByUserName(String userName);
 
     boolean existsEmployeeByEmail(String email);
-    List<EmployeeResponseDTO> findCheckInOutByEmployeeCodeBetweenDate(Integer employeeCode, Date dateFrom, Date dateTo);
+
+    @Query("SELECT e FROM Employee e WHERE NOT EXISTS (SELECT c FROM CheckInOut c WHERE c.employee = e)")
+    List<Employee> getEmployeesWithoutCheckInOut();
 }

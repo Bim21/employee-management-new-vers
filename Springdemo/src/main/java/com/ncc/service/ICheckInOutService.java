@@ -21,5 +21,4 @@ public interface ICheckInOutService {
     List<EmployeeCheckInCheckOutDTO> getAllEmployeesCheckInCheckOutByDateRange(LocalDate startDate, LocalDate endDate);
 
     //    List<EmployeeCheckInCheckOutDTO> getLateCheckInsByMonth(int month, LocalTime checkInTimeThreshold);
-    List fillAllTimkeepingByEMP(Integer employeeCode, Date dateFrom, Date dateTo);
 }

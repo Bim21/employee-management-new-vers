@@ -3,6 +3,7 @@ package com.ncc.controller;
 import com.ncc.dto.CheckInOutDTO;
 import com.ncc.dto.EmployeeRequestDTO;
 import com.ncc.dto.EmployeeResponseDTO;
+import com.ncc.entity.Employee;
 import com.ncc.service.IEmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -59,4 +61,16 @@ public class EmployeeController {
         return employeeService.getCheckInOutsByEmployeeId(employeeId);
     }
 
+    @GetMapping("/checkInOuts")
+    public List<EmployeeResponseDTO> getEmployeesWithCheckInOuts(
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate
+    ){
+        return employeeService.getEmployeesWithCheckInOuts(startDate, endDate);
+    }
+
+    @GetMapping("/without-checkinout")
+    public List<Employee> getEmployeesWithoutCheckInOut() {
+        return employeeService.getEmployeesWithoutCheckInOut();
+    }
 }

@@ -3,8 +3,10 @@ package com.ncc.service;
 import com.ncc.dto.CheckInOutDTO;
 import com.ncc.dto.EmployeeRequestDTO;
 import com.ncc.dto.EmployeeResponseDTO;
+import com.ncc.entity.Employee;
 
 import javax.mail.MessagingException;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface IEmployeeService {
@@ -20,4 +22,7 @@ public interface IEmployeeService {
 
     List<EmployeeResponseDTO> getAllEmployee();
     List<CheckInOutDTO> getCheckInOutsByEmployeeId(int employeeId);
+
+    List<EmployeeResponseDTO> getEmployeesWithCheckInOuts(LocalDate startDate, LocalDate endDate);
+    List<Employee> getEmployeesWithoutCheckInOut();
 }

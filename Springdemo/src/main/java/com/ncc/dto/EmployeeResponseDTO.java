@@ -1,5 +1,6 @@
 package com.ncc.dto;
 
+import com.ncc.entity.CheckInOut;
 import com.ncc.entity.ERole;
 import com.ncc.entity.Employee;
 import lombok.*;
@@ -21,6 +22,9 @@ public class EmployeeResponseDTO {
 //    private List<ERole> roleNames;
     private List<CheckInOutDTO> checkInRecords;
     private List<CheckInOutDTO> checkOutRecords;
+
+    public EmployeeResponseDTO(Employee employee, List<CheckInOut> checkInOuts) {
+    }
 
     public static EmployeeResponseDTO fromEntity(Employee employee) {
         EmployeeResponseDTO dto = new EmployeeResponseDTO();

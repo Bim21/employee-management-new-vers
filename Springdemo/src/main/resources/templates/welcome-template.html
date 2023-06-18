@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome Email</title>
+</head>
+<body>
+<h1>Welcome to our company!</h1>
+<p>Dear <span th:text="${employee.firstName}"></span>,</p>
+<p>Welcome to our company. Your account has been created successfully.</p>
+<p>Best regards,</p>
+<p>The Company</p>
+</body>
+</html>
