@@ -84,7 +84,7 @@ public class EmployeeService implements IEmployeeService {
                 String employeeCode = generateEmployeeCode();
                 employee.setEmployeeCode(Integer.valueOf(employeeCode));
                 employee = employeeRepository.save(employee);
-                createFakeCheckInsAndCheckOuts(employee.getId(), numberOfFakeCheckIns);
+//                createFakeCheckInsAndCheckOuts(employee.getId(), numberOfFakeCheckIns);
                 List<EmployeeRole> employeeRoles = new ArrayList<>();
                 employeeRequestDTO.setRoleIds(Arrays.asList()); // Gán danh sách các roleId vào
                 for (int roleId : employeeRequestDTO.getRoleIds()) {
@@ -215,7 +215,7 @@ public class EmployeeService implements IEmployeeService {
 
     private LocalDate generateFakeDate(int employeeId) {
         // Sử dụng ID của nhân viên để tạo ngày giả
-        LocalDate baseDate = LocalDate.of(2023, 1, 1); // Ngày cơ sở
+        LocalDate baseDate = LocalDate.of(2022, 1, 1); // Ngày cơ sở
         int daysToAdd = employeeId % 365; // Số ngày cần thêm dựa trên ID của nhân viên
         return baseDate.plusDays(daysToAdd);
     }
@@ -268,7 +268,7 @@ public class EmployeeService implements IEmployeeService {
 
         for (Employee employee : employees) {
             List<CheckInOut> checkInOuts = employee.getCheckInOuts().stream()
-                    .filter(checkInOut ->
+                    .filter(checkInOut -> checkInOut.getDate() != null &&
                             checkInOut.getDate().isAfter(start.minusDays(1)) &&
                                     checkInOut.getDate().isBefore(end.plusDays(1))
                     )
@@ -280,6 +280,7 @@ public class EmployeeService implements IEmployeeService {
 
         return employeeDTOs;
     }
+
 
     @Override
     public List<Employee> getEmployeesWithoutCheckInOut() {

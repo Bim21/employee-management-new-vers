@@ -1,6 +1,7 @@
 package com.ncc.service;
 
 import com.ncc.dto.CheckInOutDTO;
+import com.ncc.dto.EmployeeDTO;
 import com.ncc.dto.EmployeeRequestDTO;
 import com.ncc.dto.EmployeeResponseDTO;
 import com.ncc.entity.Employee;

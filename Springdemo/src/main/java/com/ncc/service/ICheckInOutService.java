@@ -13,12 +13,5 @@ public interface ICheckInOutService {
     CheckInOutDTO checkIn(Integer employeeCode);
 
     CheckInOutDTO checkOut(Integer employeeCode);
-//
-//    List<CheckInOutDTO > getCheckInRecordsByEmployeeAndDateRange(Integer employeeCode, LocalDate startDate, LocalDate endDate);
-//
-//    List<CheckInOutDTO> getCheckInErrorsByEmployeeAndMonth(Integer employeeCode, YearMonth yearMonth);
 
-    List<EmployeeCheckInCheckOutDTO> getAllEmployeesCheckInCheckOutByDateRange(LocalDate startDate, LocalDate endDate);
-
-    //    List<EmployeeCheckInCheckOutDTO> getLateCheckInsByMonth(int month, LocalTime checkInTimeThreshold);
 }
