@@ -1,6 +1,5 @@
 package com.ncc.mapper;
 
-
 import com.ncc.common.EntityMapper;
 import com.ncc.dto.RoleDTO;
 import com.ncc.entity.Role;

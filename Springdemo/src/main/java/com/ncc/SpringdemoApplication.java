@@ -1,15 +1,18 @@
 package com.ncc;
 
 import com.ncc.configuration.Config;
+import com.ncc.configuration.EmailConfig;
 import com.ncc.testbeanscope.PrototypeBean;
 import com.ncc.testbeanscope.SingletonBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
+@EnableConfigurationProperties(EmailConfig.class)
 public class SpringdemoApplication {
     public static void main(String[] args) {
         ApplicationContext applicationContext = SpringApplication.run(SpringdemoApplication.class, args);

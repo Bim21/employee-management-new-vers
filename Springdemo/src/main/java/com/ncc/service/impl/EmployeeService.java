@@ -6,6 +6,7 @@ import com.ncc.entity.CheckInOut;
 import com.ncc.entity.ERole;
 import com.ncc.entity.Employee;
 import com.ncc.entity.EmployeeRole;
+import com.ncc.event.EmployeeCreatedEvent;
 import com.ncc.exception.NotFoundException;
 import com.ncc.repository.ICheckInOutRepository;
 import com.ncc.repository.IEmployeeRepository;
@@ -15,8 +16,11 @@ import com.ncc.service.IMailService;
 import com.ncc.service.IEmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.mail.MessagingException;
+import javax.transaction.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,7 +47,8 @@ public class EmployeeService implements IEmployeeService {
     private final RestTemplate restTemplate;
     private final IRoleRepository roleRepository;
     private final IEmployeeRoleRepository employeeRoleRepository;
-    private final IMailService mailService;
+    //    private final IMailService mailService;
+    private final ApplicationEventPublisher eventPublisher;
     private final ICheckInOutRepository checkInOutRepository;
 
     //    private final EmployeeRequestMapper employeeRequestMapper;
@@ -125,7 +131,7 @@ public class EmployeeService implements IEmployeeService {
         }
         return employeeResponseDTOList;
     }
-
+    @Transactional(rollbackOn = {Exception.class, Throwable.class})
     @Override
     public EmployeeResponseDTO createEmployee(EmployeeRequestDTO employeeRequestDTO) throws MessagingException {
         String employeeCode = generateEmployeeCode();
@@ -136,7 +142,8 @@ public class EmployeeService implements IEmployeeService {
         Employee saveEmployee = employeeRepository.save(employee);
         EmployeeResponseDTO saveEmployeeDTO = mapper.map(saveEmployee, EmployeeResponseDTO.class);
 //        mailService.sendHtmlMessage(employee, employee.getPassword());
-        mailService.sendWelcomeEmail(employee);
+//        mailService.sendWelcomeEmail(employee);
+        eventPublisher.publishEvent(new EmployeeCreatedEvent(employee));
         return saveEmployeeDTO;
     }
 
@@ -191,6 +198,7 @@ public class EmployeeService implements IEmployeeService {
         int code = random.nextInt(9000) + 1000;
         return String.valueOf(code);
     }
+
     public void createFakeCheckInsAndCheckOuts(int employeeId, int numberOfFakeCheckIns) {
         Employee employee = employeeRepository.getById(employeeId);
         for (int i = 0; i < numberOfFakeCheckIns; i++) {
@@ -221,6 +229,7 @@ public class EmployeeService implements IEmployeeService {
         int daysToAdd = employeeId % 365; // Số ngày cần thêm dựa trên ID của nhân viên
         return baseDate.plusDays(daysToAdd);
     }
+
     private LocalDateTime generateFakeCheckInTime(LocalDate date) {
         // Tạo ngẫu nhiên giờ checkin trong khoảng thời gian từ 8:00 đến 9:00
         LocalTime fakeCheckInTime = LocalTime.of(8, 0)
@@ -261,11 +270,12 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Override
-    public List<EmployeeResponseDTO> getEmployeesWithCheckInOuts(LocalDate startDate, LocalDate endDate, Pageable pageable) {
+    public Page<EmployeeResponseDTO> getEmployeesWithCheckInOuts(LocalDate startDate, LocalDate endDate, Pageable pageable) {
         final LocalDate start = startDate != null ? startDate : LocalDate.now().with(DayOfWeek.MONDAY);
         final LocalDate end = endDate != null ? endDate : LocalDate.now();
 
         Page<Employee> employeesPage = employeeRepository.findAll(pageable);
+        employeesPage = employeeRepository.findAll(employeesPage.nextPageable());
         List<Employee> employees = employeesPage.getContent();
 
         List<EmployeeResponseDTO> employeeDTOs = new ArrayList<>();
@@ -274,7 +284,7 @@ public class EmployeeService implements IEmployeeService {
             List<CheckInOut> checkInOuts = employee.getCheckInOuts().stream()
                     .filter(checkInOut -> checkInOut.getDate() != null &&
                             checkInOut.getDate().isAfter(start.minusDays(1)) &&
-                                    checkInOut.getDate().isBefore(end.plusDays(1))
+                            checkInOut.getDate().isBefore(end.plusDays(1))
                     )
                     .collect(Collectors.toList());
 
@@ -282,14 +292,14 @@ public class EmployeeService implements IEmployeeService {
             employeeDTOs.add(employeeResponseDTO);
         }
 
-        return employeeDTOs;
+        return new PageImpl<>(employeeDTOs, pageable, employeesPage.getTotalElements());
     }
-
 
     @Override
     public List<Employee> getEmployeesWithoutCheckInOut() {
         return employeeRepository.getEmployeesWithoutCheckInOut();
     }
+
 }
 
 
