@@ -57,8 +57,9 @@ va tiêm service instance tương ứng vào để controller sử dụng.
 
 ------------------------------------------------------------------------------------------------------------------------------
 *Ioc Container và DI
+    - Ioc: là 1 nguyen tac trong ky thuat phan mem, no chuyen quyen kiem soat object sang 1 container hoặc 1 framework.
     - Ioc Container: kế thừa những đặc trưng của Ioc. giúp ta quản lý các bean, từ lúc khởi tạo, quản lý vòng đời, cho đến lúc bean bị hủy.
-    (vậy Ioc là gi? Inversion of controller: đảo ngược sự điều khiển, là một nguyên tắc lập trình chuyển quyền quản lý các object cho Context)
+    (vậy Ioc là gi? Inversion of controller: đảo ngược sự điều khiển)
     - Ioc Container sử dụng DI (Dependency Injection) để quản lý các thành phần tạo nên ứng dụng.
     các thành phần đó gọi là Spring Bean.
 
@@ -80,7 +81,7 @@ va tiêm service instance tương ứng vào để controller sử dụng.
     khi ta tạo một bean thì ta không thể thay đổi phụ thuộc của nó nữa.
 
     (Trong project cũng đã có dùng constructor injection)
-    @RequiredConstrutor: sử dụng để khởi tạo constructor khi inject dependency
+    @RequiredConstrutor: sử dụng để tự động khởi tạo constructor cho các trường dữ liệu bắt buộc
 
     SpringApplication.run(App.class, args) chính là câu lệnh để tạo ra container. Sau đó nó sẽ tìm toàn bộ
     các dependency trong project và đưa vào đó.
@@ -130,8 +131,8 @@ va tiêm service instance tương ứng vào để controller sử dụng.
     + @ManyToMany: N - N.
 
 - Fetch Type: LAZY vs EAGER
-    + chỉ tải dữ liệu khi được gọi.
-    + tải tất cả các dữ liệu từ các đối tượng liên quan
+    + LAZY: chỉ tải dữ liệu khi được gọi.
+    + EAGER: tải tất cả các dữ liệu từ các đối tượng liên quan
 - Cascade:
     + là một tính năng giúp quản lý trạng thái của các đối tươnng trong một mối quan hệ
     một cách tự động.
@@ -301,4 +302,81 @@ Spring Security, UserService
 
 
 
+Trong luồng chạy của JWT thông qua các hàm bạn đã cung cấp, quá trình xác thực và ủy quyền được thực hiện như sau:
 
+1. Khi người dùng gửi yêu cầu đăng nhập thành công, phương thức `generateJwtToken()` trong lớp `JwtUtils` được gọi.
+Hàm này nhận thông tin xác thực (authentication) và tạo ra một JWT (JSON Web Token) bằng cách sử dụng thuật toán ký (sign) HS512 và khóa bí mật (jwtSecret) đã được cấu hình.
+JWT được ký và chứa thông tin về người dùng (username) và thời gian hết hạn.
+
+2. Khi người dùng gửi yêu cầu bảo mật đến ứng dụng, bộ lọc `AuthTokenFilter` được áp dụng.
+Bộ lọc này kiểm tra xem yêu cầu có chứa JWT trong tiêu đề "Authorization" không.
+Nếu có, hàm `validateJwtToken()` trong lớp `JwtUtils` được gọi để xác minh tính hợp lệ của JWT.
+
+3. Trong hàm `validateJwtToken()`, JWT được giải mã (decode) và xác minh (verify) bằng cách sử dụng khóa bí mật (jwtSecret) đã được cấu hình.
+Nếu JWT hợp lệ và chữ ký được xác minh thành công, hàm trả về giá trị `true`. Nếu không, các ngoại lệ tương ứng sẽ được xử lý và hàm trả về giá trị `false`.
+
+4. Nếu JWT hợp lệ, hàm `getUserNameFromJwtToken()` trong lớp `JwtUtils` được gọi để lấy thông tin người dùng (username) từ JWT.
+
+5. Sau đó, hàm `loadUserByUsername()` trong lớp `UserDetailsServiceImpl` được gọi để tải thông tin người dùng từ cơ sở dữ liệu hoặc nguồn dữ liệu khác.
+Kết quả được trả về là một đối tượng `UserDetails` chứa thông tin xác thực về người dùng.
+
+6. Cuối cùng, một đối tượng `UsernamePasswordAuthenticationToken` được tạo ra với `UserDetails`, `null` (mật khẩu không cần thiết trong trường hợp này) và các quyền truy cập của người dùng.
+Đối tượng `UsernamePasswordAuthenticationToken` này được đặt trong `SecurityContextHolder` để xác định người dùng đã được xác thực thành công.
+
+7. Tiếp theo, quyền truy cập của người dùng được kiểm tra trong phương thức `configure()` của lớp `SecurityConfig`.
+Các quy tắc được đặt cho các URL và vai trò (role) tương ứng. Với ví dụ của bạn, URL "/signup" và "/signin" được cho phép truy cập mà không cần xác thực.
+Các URL "/employees/*" và "/role/*" chỉ được phép truy cập bởi người dùng có vai trò "ADMIN".
+URL "/checkInOut/*" được phép truy cập bởi cả người dùng có vai trò "ADMIN" và "EMPLOYEE".
+
+8. Cuối cùng, bộ lọc `AuthTokenFilter` được thêm vào trước `UsernamePasswordAuthenticationFilter`, điều này đảm bảo rằng mỗi yêu cầu đi qua bộ lọc này để xác thực và ủy quyền trước khi tiếp tục xử lý yêu cầu bởi các bộ lọc khác.
+
+Với luồng chạy này, JWT được sử dụng để xác thực người dùng thông qua việc cung cấp thông tin xác thực và phát hành một JWT hợp lệ.
+JWT được sử dụng trong mỗi yêu cầu bảo mật để xác minh tính hợp lệ của người dùng và lấy thông tin người dùng từ JWT.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+1. Automatic Custom Queries:
+   - Spring Data JPA cung cấp khả năng tạo tự động các truy vấn dựa trên tên phương thức của repository.
+   - Bạn có thể tạo truy vấn tuỳ chỉnh bằng cách đặt tên phương thức theo quy ước.
+   - Ví dụ: `findByEmployeeAndDateBetween(Long employeeId, LocalDate startDate, LocalDate endDate)`
+
+2. Manual Custom Queries (JPQL):
+   - Bạn có thể viết truy vấn JPQL (Java Persistence Query Language) tùy chỉnh để truy vấn dữ liệu từ cơ sở dữ liệu.
+   - Sử dụng annotation `@Query` trên phương thức repository để chỉ định truy vấn JPQL.
+   - Ví dụ: `@Query("SELECT c FROM CheckInOut c WHERE c.employeeId = :employeeId AND c.date BETWEEN :startDate AND :endDate")`
+
+3. Native query:
+   - Bạn có thể sử dụng truy vấn SQL nguyên thủy để truy vấn dữ liệu từ cơ sở dữ liệu.
+   - Sử dụng annotation `@Query` với `nativeQuery = true` trên phương thức repository để chỉ định truy vấn SQL nguyên thủy.
+   - Ví dụ: `@Query(value = "SELECT * FROM check_in_out WHERE employee_id = :employeeId AND date BETWEEN :startDate AND :endDate", nativeQuery = true)`
+
+4. Customizing the Result with Class Constructors:
+   - Bạn có thể tạo kết quả truy vấn tuỳ chỉnh bằng cách sử dụng các hàm tạo của lớp.
+   - Định nghĩa một hàm tạo trong lớp kết quả truy vấn và sử dụng nó trong truy vấn JPQL hoặc SQL.
+   - Ví dụ: `SELECT new com.example.dto.CheckInOutDTO(c.employeeId, c.date) FROM CheckInOut c`
+
+5. Customizing the Result with Spring Data Projection:
+   - Bạn có thể tạo kết quả truy vấn tuỳ chỉnh bằng cách sử dụng Spring Data Projection.
+   - Định nghĩa một interface chứa các phương thức getter tương ứng với các trường dữ liệu bạn muốn trả về.
+   - Ví dụ: `interface CheckInOutProjection { Long getEmployeeId(); LocalDate getDate(); }`
+
+6. Join table:
+   - Bạn có thể thực hiện các truy vấn kết hợp (join) giữa các bảng trong cơ sở dữ liệu bằng cách sử dụng truy vấn JPQL hoặc SQL.
+   - Sử dụng các câu lệnh JOIN để kết hợp các bảng dựa trên quan hệ giữa chúng.
+   - Ví dụ: `SELECT c FROM CheckInOut c JOIN c.employee e WHERE e.department = :department`
+
+7. Sort, Paging với JPQL & native query, so sánh với Slice:
+   - Bạn có thể sắp xếp (sort) và phân trang (paging) kết quả truy vấn bằng cách sử dụng truy vấn JPQL hoặc SQL và sử dụng các từ khóa ORDER BY và LIMIT/OFFSET.
+   - Đối với truy vấn JPQL và native query, bạn có thể sử dụng các phương thức Pageable của Spring Data JPA để chỉ định sắp xếp và phân trang.
+   - Ví dụ: `@Query("SELECT c FROM CheckInOut c WHERE c.employeeId = :employeeId ORDER BY c.date DESC") Page<CheckInOut> findByEmployeeIdWithSorting(Long employeeId, Pageable pageable)`
+
+8. Cache query:
+   - Spring Data JPA hỗ trợ caching (bộ nhớ cache) cho các truy vấn dựa trên annotations như `@Cacheable` và `@CachePut`.
+   - Bạn có thể đánh dấu các phương thức repository với `@Cacheable` để lưu kết quả truy vấn vào bộ nhớ cache và tái sử dụng kết quả từ cache cho các lần truy vấn sau.
+   - Ví dụ: `@Cacheable("checkInOutCache") List<CheckInOut> findByEmployeeId(Long employeeId)`
+
+Lưu ý rằng để sử dụng các tính năng trên, bạn cần cấu hình đúng các dependency và annotation như `@EnableCaching` trong ứng dụng Spring của bạn.
+
+
+nên ưu tiên sử dụng "Automatic Custom Queries" và "Customizing the Result with Spring Data Projection" để tận dụng lợi ích của việc tự động tạo câu truy vấn và tối ưu hiệu suất.
+Các loại query khác như "Manual Custom Queries" và "Native Query" nên được sử dụng khi cần tạo các câu truy vấn phức tạp hoặc sử dụng tính năng đặcif của cơ sở dữ liệu.

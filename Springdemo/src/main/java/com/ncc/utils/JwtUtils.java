@@ -23,6 +23,7 @@ public class JwtUtils {
     private int jwtExpirationMs;
 
     public String generateJwtToken(Authentication authentication) {
+        System.out.println("generateJwtToken is called");
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
         return Jwts.builder()
@@ -34,6 +35,7 @@ public class JwtUtils {
     }
 
     public String getUserNameFromJwtToken(String token) {
+        System.out.println("get username form JwtToken");
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
 
