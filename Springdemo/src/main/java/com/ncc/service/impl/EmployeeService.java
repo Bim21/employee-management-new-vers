@@ -16,6 +16,8 @@ import com.ncc.service.IEmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -259,11 +261,13 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Override
-    public List<EmployeeResponseDTO> getEmployeesWithCheckInOuts(LocalDate startDate, LocalDate endDate) {
+    public List<EmployeeResponseDTO> getEmployeesWithCheckInOuts(LocalDate startDate, LocalDate endDate, Pageable pageable) {
         final LocalDate start = startDate != null ? startDate : LocalDate.now().with(DayOfWeek.MONDAY);
         final LocalDate end = endDate != null ? endDate : LocalDate.now();
 
-        List<Employee> employees = employeeRepository.findAll();
+        Page<Employee> employeesPage = employeeRepository.findAll(pageable);
+        List<Employee> employees = employeesPage.getContent();
+
         List<EmployeeResponseDTO> employeeDTOs = new ArrayList<>();
 
         for (Employee employee : employees) {
