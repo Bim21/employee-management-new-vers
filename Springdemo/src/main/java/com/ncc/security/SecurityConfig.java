@@ -42,6 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests().antMatchers("employees/*","role/*")
                 .hasAnyAuthority("ADMIN");
+
         http.authorizeRequests().antMatchers("/checkInOut/*")
                 .hasAnyAuthority( "ADMIN","EMPLOYEE");
 

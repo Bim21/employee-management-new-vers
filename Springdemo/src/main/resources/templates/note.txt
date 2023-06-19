@@ -1,0 +1,6 @@
+Application Context vs Bean Factory:
+
+Application context thì default là EAGER
+Bean Factory thì default là LAZY
+Bean Factory chỉ dùng xml
+Apllication thì dùng 3 cái

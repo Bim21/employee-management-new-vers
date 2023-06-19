@@ -18,6 +18,4 @@ public class CheckInOutDTO {
     private LocalDateTime checkOutTime;
     private boolean isError;
 
-
-
 }
