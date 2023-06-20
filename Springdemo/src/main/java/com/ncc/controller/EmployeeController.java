@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
@@ -65,6 +66,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/checkInOuts")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Page<EmployeeResponseDTO> getEmployeesWithCheckInOuts(
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
@@ -74,10 +76,12 @@ public class EmployeeController {
     }
 
     @GetMapping("/without-checkinout")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<EmployeeWithoutCheckInOutProjection> getEmployeesWithoutCheckInOut() {
         return employeeService.getEmployeesWithoutCheckInOut();
     }
     @GetMapping("/checkin-errors")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<Employee> getEmployeesCheckInOutError() {
         return employeeService.getEmployeesWithoutError();
     }

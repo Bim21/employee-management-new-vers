@@ -20,7 +20,7 @@ public class CheckInOutReminderJob {
     // TODO: dynamic Cron
 
     // Định nghĩa phương thức sẽ được gọi theo lịch trình cron
-    @Scheduled(cron = "0 0 8 * * *") // Chạy vào lúc 8:00 AM hàng ngày
+    @Scheduled(cron = "${cron.job.sendCheckInOutReminders}") // Chạy vào lúc 8:00 AM hàng ngày
     public void sendCheckInOutReminders() {
         // Lấy danh sách nhân viên chưa check-in/checkout
         List<Employee> employees = employeeService.getEmployeesWithoutError();

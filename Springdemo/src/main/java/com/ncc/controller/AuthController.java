@@ -5,6 +5,7 @@ import com.ncc.configuration.authrequest.SignUpRequest;
 import com.ncc.service.IAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,6 +17,7 @@ public class AuthController {
     private final IAuthService authService;
 
     @PostMapping("/signup")
+    @PreAuthorize("hasA")
     public ResponseEntity<?> registerUser(@RequestBody SignUpRequest signUpRequest){
         return authService.registerUser(signUpRequest);
     }
