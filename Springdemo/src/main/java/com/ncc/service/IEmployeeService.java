@@ -5,6 +5,7 @@ import com.ncc.dto.EmployeeDTO;
 import com.ncc.dto.EmployeeRequestDTO;
 import com.ncc.dto.EmployeeResponseDTO;
 import com.ncc.entity.Employee;
+import com.ncc.projection.EmployeeWithoutCheckInOutProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -30,6 +31,7 @@ public interface IEmployeeService {
 
     Page<EmployeeResponseDTO> getEmployeesWithCheckInOuts(LocalDate startDate, LocalDate endDate, Pageable pageable);
 
-    List<Employee> getEmployeesWithoutCheckInOut();
 
+    List<Employee> getEmployeesWithoutError();
+    List<EmployeeWithoutCheckInOutProjection> getEmployeesWithoutCheckInOut();
 }

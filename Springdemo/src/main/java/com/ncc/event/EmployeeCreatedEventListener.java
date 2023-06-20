@@ -22,5 +22,6 @@ public class EmployeeCreatedEventListener {
         System.out.println("có user đã được tạo");
         emailService.sendWelcomeEmail(employee);
         System.out.println("gửi email cho user");
+
     }
 }

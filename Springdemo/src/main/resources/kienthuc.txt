@@ -377,6 +377,5 @@ JWT được sử dụng trong mỗi yêu cầu bảo mật để xác minh tín
 
 Lưu ý rằng để sử dụng các tính năng trên, bạn cần cấu hình đúng các dependency và annotation như `@EnableCaching` trong ứng dụng Spring của bạn.
 
-
 nên ưu tiên sử dụng "Automatic Custom Queries" và "Customizing the Result with Spring Data Projection" để tận dụng lợi ích của việc tự động tạo câu truy vấn và tối ưu hiệu suất.
 Các loại query khác như "Manual Custom Queries" và "Native Query" nên được sử dụng khi cần tạo các câu truy vấn phức tạp hoặc sử dụng tính năng đặcif của cơ sở dữ liệu.

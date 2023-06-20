@@ -20,4 +20,5 @@ public interface ICheckInOutService {
     List<CheckInOutProjection> getCheckInOutByEmployeeAndDateRange(Integer employeeId, LocalDate startDate, LocalDate endDate);
 
     List<CheckInOut> getErrorCheckInsByEmployeeAndMonth(Integer employeeId, int year, int month);
+
 }

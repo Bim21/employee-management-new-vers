@@ -19,3 +19,5 @@ public class CheckInOutDTO {
     private boolean isError;
 
 }
+
+// TODO: xem lại DTO <-> Entity

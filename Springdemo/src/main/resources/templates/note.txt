@@ -4,3 +4,8 @@ Application context thì default là EAGER
 Bean Factory thì default là LAZY
 Bean Factory chỉ dùng xml
 Apllication thì dùng 3 cái
+
+các lỗi có trong project:
+- nếu đã check-in check-out rồi thì sẽ không checkin checkout đc nữa
+
+

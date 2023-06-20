@@ -8,6 +8,7 @@ import com.ncc.entity.Employee;
 import com.ncc.entity.EmployeeRole;
 import com.ncc.event.EmployeeCreatedEvent;
 import com.ncc.exception.NotFoundException;
+import com.ncc.projection.EmployeeWithoutCheckInOutProjection;
 import com.ncc.repository.ICheckInOutRepository;
 import com.ncc.repository.IEmployeeRepository;
 import com.ncc.repository.IEmployeeRoleRepository;
@@ -131,6 +132,7 @@ public class EmployeeService implements IEmployeeService {
         }
         return employeeResponseDTOList;
     }
+
     @Transactional(rollbackOn = {Exception.class, Throwable.class})
     @Override
     public EmployeeResponseDTO createEmployee(EmployeeRequestDTO employeeRequestDTO) throws MessagingException {
@@ -296,9 +298,19 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Override
-    public List<Employee> getEmployeesWithoutCheckInOut() {
+    public List<Employee> getEmployeesWithoutError() {
+        return employeeRepository.getEmployeesCheckInOutError();
+    }
+
+    @Override
+    public List<EmployeeWithoutCheckInOutProjection> getEmployeesWithoutCheckInOut() {
         return employeeRepository.getEmployeesWithoutCheckInOut();
     }
+
+//    @Override
+//    public List<Employee> getEmployeesWithoutCheckInOut() {
+//        return employeeRepository.getEmployeesWithoutCheckInOut();
+//    }
 
 }
 

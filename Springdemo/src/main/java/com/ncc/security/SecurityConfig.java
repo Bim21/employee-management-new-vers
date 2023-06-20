@@ -19,7 +19,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     UserDetailsServiceImpl userDetailsService;
 
     @Bean
-    public AuthTokenFilter jwtAuthenticationFilter(){
+    public AuthTokenFilter jwtAuthenticationFilter() {
         return new AuthTokenFilter();
     }
 
@@ -30,7 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -40,14 +40,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests().antMatchers("/signup", "/signin").permitAll();
 
-        http.authorizeRequests().antMatchers("employees/*","role/*")
+        http.authorizeRequests().antMatchers("employees/**", "role/**")
                 .hasAnyAuthority("ADMIN");
 
-        http.authorizeRequests().antMatchers("/checkInOut/*")
-                .hasAnyAuthority( "ADMIN","EMPLOYEE");
+        http.authorizeRequests().antMatchers("/checkInOut/**")
+                .hasAnyAuthority("EMPLOYEE");
 
         http.authorizeRequests().and().exceptionHandling().accessDeniedPage("/error");
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }
+
+// TODO ngoài sử dụng cách configure trên có thể dùng các annotation nào để phân quyền
+// TODO @PreAuthorize("hasAuthority('ADMIN')"),

@@ -22,7 +22,7 @@ public class CheckInOut {
     @Column(name = "id")
     private int id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
 

@@ -4,6 +4,7 @@ import com.ncc.dto.CheckInOutDTO;
 import com.ncc.dto.EmployeeRequestDTO;
 import com.ncc.dto.EmployeeResponseDTO;
 import com.ncc.entity.Employee;
+import com.ncc.projection.EmployeeWithoutCheckInOutProjection;
 import com.ncc.service.IEmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class EmployeeController {
     private MessageSource messageSource;
 
     @PostMapping("/employee")
-    public List<EmployeeResponseDTO> syncData(@RequestBody EmployeeRequestDTO employeeRequestDTO){
+    public List<EmployeeResponseDTO> syncData(@RequestBody EmployeeRequestDTO employeeRequestDTO) {
         return employeeService.syncData(employeeRequestDTO);
     }
 
@@ -54,7 +55,7 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public List<EmployeeResponseDTO> getAllEmployee(){
+    public List<EmployeeResponseDTO> getAllEmployee() {
         return employeeService.getAllEmployee();
     }
 
@@ -63,18 +64,21 @@ public class EmployeeController {
         return employeeService.getCheckInOutsByEmployeeId(employeeId);
     }
 
-    @GetMapping("/admin/checkInOuts")
+    @GetMapping("/checkInOuts")
     public Page<EmployeeResponseDTO> getEmployeesWithCheckInOuts(
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
             Pageable pageable
-    ){
+    ) {
         return employeeService.getEmployeesWithCheckInOuts(startDate, endDate, pageable);
     }
 
-    @GetMapping("/admin/without-checkinout")
-    public List<Employee> getEmployeesWithoutCheckInOut() {
+    @GetMapping("/without-checkinout")
+    public List<EmployeeWithoutCheckInOutProjection> getEmployeesWithoutCheckInOut() {
         return employeeService.getEmployeesWithoutCheckInOut();
     }
-
+    @GetMapping("/checkin-errors")
+    public List<Employee> getEmployeesCheckInOutError() {
+        return employeeService.getEmployeesWithoutError();
+    }
 }

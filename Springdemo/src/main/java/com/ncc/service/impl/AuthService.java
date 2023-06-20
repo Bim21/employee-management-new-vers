@@ -14,6 +14,7 @@ import com.ncc.security.UserDetailsImpl;
 import com.ncc.service.IAuthService;
 import com.ncc.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -83,12 +84,14 @@ public class AuthService implements IAuthService {
                         Role adminRole = roleRepository.findByRoleName(ERole.ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found"));
                         roles.add(adminRole);
-
                         break;
-                    default:
+                    case "EMPLOYEE":
                         Role employeeRole = roleRepository.findByRoleName(ERole.EMPLOYEE)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found"));
                         roles.add(employeeRole);
+                        break;
+                    default:
+                        throw new RuntimeException("Error: Invalid role: " + role);
                 }
             });
         }

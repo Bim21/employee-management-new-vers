@@ -17,12 +17,13 @@ public class CheckInOutReminderJob {
     private final EmployeeService employeeService;
     private final MailService mailService;
 
+    // TODO: dynamic Cron
 
     // Định nghĩa phương thức sẽ được gọi theo lịch trình cron
     @Scheduled(cron = "0 0 8 * * *") // Chạy vào lúc 8:00 AM hàng ngày
     public void sendCheckInOutReminders() {
         // Lấy danh sách nhân viên chưa check-in/checkout
-        List<Employee> employees = employeeService.getEmployeesWithoutCheckInOut();
+        List<Employee> employees = employeeService.getEmployeesWithoutError();
 
         // Gửi email thông báo cho từng nhân viên
         for (Employee employee : employees) {
