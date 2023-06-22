@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-@Scope("prototype")
+@Scope("singleton")
 public class SingletonBean {
 
     private String message;
@@ -30,3 +30,4 @@ public class SingletonBean {
 //    }
 }
 
+// TODO: Bean Scope

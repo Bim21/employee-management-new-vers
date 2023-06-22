@@ -7,8 +7,8 @@ import org.springframework.context.annotation.PropertySources;
 
 @Configuration
 @PropertySources({
-        @PropertySource("classpath:application-alpha.properties"),
-        @PropertySource("classpath:application-dev.properties")
+        @PropertySource("classpath:application-dev.properties"),
+        @PropertySource("classpath:application-alpha.properties")
 })
 public class Config {
     @Value("${message}")
@@ -18,3 +18,7 @@ public class Config {
         return message;
     }
 }
+
+// TODO: Spring Property
+// ConfigurationProperties
+// dùng option của java để define file nào cần chạy

@@ -17,3 +17,5 @@ public class RestTemplateConfig {
         return restTemplate;
     }
 }
+
+// TODO: RestTemplate vs WebClient

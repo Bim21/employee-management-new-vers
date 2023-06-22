@@ -15,3 +15,5 @@ public class CustomExceptionHandler {
         return new ErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 }
+
+// TODO: RestControllerAdvice

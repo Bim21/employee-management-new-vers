@@ -1,6 +1,7 @@
 package com.ncc.controller;
 
 import com.ncc.dto.CheckInOutDTO;
+import com.ncc.dto.EmployeeDTO;
 import com.ncc.dto.EmployeeRequestDTO;
 import com.ncc.dto.EmployeeResponseDTO;
 import com.ncc.entity.Employee;
@@ -56,7 +57,7 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public List<EmployeeResponseDTO> getAllEmployee() {
+    public List<EmployeeDTO> getAllEmployee() {
         return employeeService.getAllEmployee();
     }
 
