@@ -26,6 +26,7 @@ public interface ICheckInOutRepository extends JpaRepository<CheckInOut, Integer
     @Query(value = "SELECT check_in_time, check_out_time FROM check_in_out WHERE employee_id = :employeeId AND date BETWEEN :startDate AND :endDate", nativeQuery = true)
     List<CheckInOutProjection> findCheckInOutByEmployeeAndDateBetween(@Param("employeeId") Integer employeeId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
+
     @Cacheable("checkInOutErrors")
     @Query("SELECT c FROM CheckInOut c WHERE c.employee = :employee AND YEAR(c.checkInTime) = :year AND MONTH(c.checkInTime) = :month AND c.isError = true")
     List<CheckInOut> findErrorCheckInsByEmployeeAndMonth(@Param("employee") Employee employee, @Param("year") int year, @Param("month") int month);

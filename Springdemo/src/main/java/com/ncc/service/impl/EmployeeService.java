@@ -8,6 +8,7 @@ import com.ncc.entity.Employee;
 import com.ncc.entity.EmployeeRole;
 import com.ncc.event.EmployeeCreatedEvent;
 import com.ncc.exception.NotFoundException;
+import com.ncc.mapper.IEmployeeMapper;
 import com.ncc.projection.EmployeeWithoutCheckInOutProjection;
 import com.ncc.repository.ICheckInOutRepository;
 import com.ncc.repository.IEmployeeRepository;
@@ -17,12 +18,14 @@ import com.ncc.service.IMailService;
 import com.ncc.service.IEmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -51,7 +54,8 @@ public class EmployeeService implements IEmployeeService {
     //    private final IMailService mailService;
     private final ApplicationEventPublisher eventPublisher;
     private final ICheckInOutRepository checkInOutRepository;
-
+    @Autowired
+    private IEmployeeMapper employeeMapper;
     //    private final EmployeeRequestMapper employeeRequestMapper;
     @PostConstruct
     public void init() {
@@ -132,7 +136,7 @@ public class EmployeeService implements IEmployeeService {
         }
         return employeeResponseDTOList;
     }
-
+    @Async
     @Transactional(rollbackOn = {Exception.class, Throwable.class})
     @Override
     public EmployeeResponseDTO createEmployee(EmployeeRequestDTO employeeRequestDTO) throws MessagingException {
@@ -182,12 +186,12 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Override
-    public List<EmployeeResponseDTO> getAllEmployee() {
+    public List<EmployeeDTO> getAllEmployee() {
         List<Employee> employees = employeeRepository.findAll();
-        List<EmployeeResponseDTO> employeeDTOs = new ArrayList<>();
+        List<EmployeeDTO> employeeDTOs = new ArrayList<>();
 
         for (Employee employee : employees) {
-            EmployeeResponseDTO dto = EmployeeResponseDTO.fromEntity(employee);
+            EmployeeDTO dto = employeeMapper.toDTO(employee);
             employeeDTOs.add(dto);
         }
 

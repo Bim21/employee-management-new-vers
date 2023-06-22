@@ -25,7 +25,7 @@ public interface IEmployeeService {
 
     List<EmployeeResponseDTO> searchEmployeesByName(String keyword);
 
-    List<EmployeeResponseDTO> getAllEmployee();
+    List<EmployeeDTO> getAllEmployee();
 
     List<CheckInOutDTO> getCheckInOutsByEmployeeId(int employeeId);
 

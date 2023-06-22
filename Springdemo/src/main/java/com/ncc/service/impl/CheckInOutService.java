@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.transaction.Transactional;
 import java.time.*;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
@@ -42,6 +43,7 @@ public class CheckInOutService implements ICheckInOutService {
         System.out.println("CheckInOutService bị hủy");
     }
 
+    @Transactional
     @Override
     public CheckInOutDTO checkIn(Integer employeeCode) {
         Employee employee = employeeRepository.findByEmployeeCode(employeeCode);
@@ -53,7 +55,6 @@ public class CheckInOutService implements ICheckInOutService {
         if (hasCheckInOut) {
             throw new CheckInException(MessageConstant.CHECK_IN_SUCCESSFULLY);
         }
-
         CheckInOut checkInOut = new CheckInOut();
         checkInOut.setEmployee(employee);
         checkInOut.setCheckInTime(LocalDateTime.now());
@@ -62,6 +63,7 @@ public class CheckInOutService implements ICheckInOutService {
         return mapper.map(saveCheckInOut, CheckInOutDTO.class);
     }
 
+    @Transactional
     @Override
     public CheckInOutDTO checkOut(Integer employeeCode) {
         Employee employee = employeeRepository.findByEmployeeCode(employeeCode);
@@ -73,7 +75,9 @@ public class CheckInOutService implements ICheckInOutService {
         if (checkInOut == null) {
             throw new CheckInException(MessageConstant.CHECK_OUT_SUCCESSFULLY);
         }
-
+        if(checkInOut.isError()){
+            throw new CheckInException(MessageConstant.CHECK_OUT_FAILED);
+        }
         checkInOut.setCheckOutTime(LocalDateTime.now());
 
         CheckInOut saveCheckInOut = checkInOutRepository.save(checkInOut);

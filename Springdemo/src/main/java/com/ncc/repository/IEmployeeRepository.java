@@ -33,6 +33,7 @@ public interface IEmployeeRepository extends JpaRepository<Employee, Integer> {
     @Query("SELECT e FROM Employee e WHERE NOT EXISTS (SELECT c FROM CheckInOut c WHERE c.employee = e)")
     List<Employee> getEmployeesCheckInOutError();
 
+    // TODO: Cache Query, Projection
     @Cacheable("getEmployee")
     @Query("SELECT e.id AS id, e.firstName AS firstName, e.lastName AS lastName, e.email AS email FROM Employee e WHERE NOT EXISTS (SELECT 1 FROM CheckInOut c WHERE c.employee = e)")
     List<EmployeeWithoutCheckInOutProjection> getEmployeesWithoutCheckInOut();

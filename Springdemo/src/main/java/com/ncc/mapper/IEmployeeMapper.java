@@ -4,12 +4,13 @@ import com.ncc.dto.EmployeeDTO;
 import com.ncc.entity.Employee;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.web.servlet.handler.MappedInterceptor;
+import org.mapstruct.factory.Mappers;
 
-@Mapper
-public interface EmployeeMapper {
+@Mapper(componentModel = "spring")
+public interface IEmployeeMapper {
+//    IEmployeeMapper INSTANCE = Mappers.getMapper(IEmployeeMapper.class);
 
-    @Mapping(source = "email", target = "userName")
+    @Mapping(target = "email")
     @Mapping(target = "employeeCode", ignore = true)
     @Mapping(target = "password", ignore = true)
     Employee toEntity(EmployeeDTO dto);
