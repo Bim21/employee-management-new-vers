@@ -13,6 +13,6 @@ public class MessageConstant {
     public static final String SEND_MAIL_DONE = "Done";
     public static final String SEND_MAIL_FAIL = "Fail";
     public static final String FAILED_TO_UPLOAD_EMPTY_FILE = "Failed to upload empty file";
-    public static final String UPLOADED_THE_FILE_SUCCESSFULLY = "Uploaded the file successfully";
+    public static final String CRON_JOB_CREATED_SUCCESSFULLY = "Cron job create successfully!";
     public static final String COULD_NOT_UPLOAD_THE_FILE = "Could not upload the file";
 }

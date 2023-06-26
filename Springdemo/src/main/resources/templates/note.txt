@@ -1,11 +1,21 @@
 Application Context vs Bean Factory:
 
-Application context thì default là EAGER
-Bean Factory thì default là LAZY
+Application context thì default là EAGER, gọi tất cả các bean
+Bean Factory thì default là LAZY mỗi lan muốn gọi bean thì phải dùng phương thức getBean
 Bean Factory chỉ dùng xml
 Apllication thì dùng 3 cái
 
 các lỗi có trong project:
 - nếu đã check-in check-out rồi thì sẽ không checkin checkout đc nữa
+
+- note review:
+    + thêm ví dụ về cascade.
+    + thêm ví dụ về @OnetoOne @ManytoMany
+    + dependency được thực hiện ở giai đoạn nào trong Spring.
+    + ConfigurationProperties
+    + Servlet Request
+
+
+
 
 

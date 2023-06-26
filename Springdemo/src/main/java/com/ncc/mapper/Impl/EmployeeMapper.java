@@ -1,5 +1,6 @@
 package com.ncc.mapper.Impl;
 
+import com.ncc.dto.EmployeeCheckInCheckOutDTO;
 import com.ncc.dto.EmployeeDTO;
 import com.ncc.entity.Employee;
 import com.ncc.mapper.IEmployeeMapper;
@@ -28,4 +29,5 @@ public class EmployeeMapper implements IEmployeeMapper {
         }
         return null;
     }
+
 }

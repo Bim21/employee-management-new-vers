@@ -1,5 +1,6 @@
 package com.ncc.dto;
 
+import com.ncc.entity.Address;
 import com.ncc.entity.CheckInOut;
 import com.ncc.entity.ERole;
 import com.ncc.entity.Employee;
@@ -20,6 +21,7 @@ public class EmployeeResponseDTO {
     private String lastName;
     private String fullName;
     private String email;
+    private Address addresses;
     private String employeeCode;
 //    private List<ERole> roleNames;
     private List<CheckInOutDTO> checkInRecords;

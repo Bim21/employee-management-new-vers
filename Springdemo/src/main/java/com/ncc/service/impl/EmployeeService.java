@@ -2,10 +2,7 @@ package com.ncc.service.impl;
 
 import com.ncc.constants.MessageConstant;
 import com.ncc.dto.*;
-import com.ncc.entity.CheckInOut;
-import com.ncc.entity.ERole;
-import com.ncc.entity.Employee;
-import com.ncc.entity.EmployeeRole;
+import com.ncc.entity.*;
 import com.ncc.event.EmployeeCreatedEvent;
 import com.ncc.exception.NotFoundException;
 import com.ncc.mapper.IEmployeeMapper;
@@ -19,6 +16,7 @@ import com.ncc.service.IEmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Page;
@@ -137,7 +135,6 @@ public class EmployeeService implements IEmployeeService {
         return employeeResponseDTOList;
     }
 
-    @Async
     @Transactional(rollbackOn = {Exception.class, Throwable.class})
     @Override
     public EmployeeResponseDTO createEmployee(EmployeeRequestDTO employeeRequestDTO) throws MessagingException {
@@ -146,6 +143,10 @@ public class EmployeeService implements IEmployeeService {
         employee.setUserName(employee.getEmail().substring(0, employeeRequestDTO.getEmail().indexOf("@")));
         employee.setPassword(passwordEncoder.encode(employeeRequestDTO.getPassword()));
         employee.setEmployeeCode(Integer.valueOf(employeeCode));
+        Address address = new Address();
+        address.setStreet(employeeRequestDTO.getAddresses().getStreet());
+        address.setCity(employeeRequestDTO.getAddresses().getCity());
+        employee.setAddresses(address);
         Employee saveEmployee = employeeRepository.save(employee);
         EmployeeResponseDTO saveEmployeeDTO = mapper.map(saveEmployee, EmployeeResponseDTO.class);
 //        mailService.sendHtmlMessage(employee, employee.getPassword());
@@ -311,7 +312,10 @@ public class EmployeeService implements IEmployeeService {
     public List<EmployeeWithoutCheckInOutProjection> getEmployeesWithoutCheckInOut() {
         return employeeRepository.getEmployeesWithoutCheckInOut();
     }
+    @CacheEvict
+    public void clearCacheById(int id){
 
+    }
 //    @Override
 //    public List<Employee> getEmployeesWithoutCheckInOut() {
 //        return employeeRepository.getEmployeesWithoutCheckInOut();

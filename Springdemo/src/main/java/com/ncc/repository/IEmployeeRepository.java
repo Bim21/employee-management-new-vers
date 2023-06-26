@@ -37,4 +37,10 @@ public interface IEmployeeRepository extends JpaRepository<Employee, Integer> {
     @Cacheable("getEmployee")
     @Query("SELECT e.id AS id, e.firstName AS firstName, e.lastName AS lastName, e.email AS email FROM Employee e WHERE NOT EXISTS (SELECT 1 FROM CheckInOut c WHERE c.employee = e)")
     List<EmployeeWithoutCheckInOutProjection> getEmployeesWithoutCheckInOut();
+
 }
+
+// TODO: doc them ve native query https://techmaster.vn/posts/37152/native-queries-trong-spring-data-jpa
+//https://techmaster.vn/posts/37151/phan-trang-va-sap-xep-du-lieu-voi-spring-data-jpa
+
+// TODO: Cache Query https://stackjava.com/spring-boot/code-vi-du-spring-boot-caching-cacheable-cacheevict-cacheput-caching.html

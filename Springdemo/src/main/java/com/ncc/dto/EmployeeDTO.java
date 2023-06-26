@@ -1,5 +1,6 @@
 package com.ncc.dto;
 
+import com.ncc.entity.Address;
 import com.ncc.entity.Employee;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,6 @@ public class EmployeeDTO {
     private String firstName;
     private String lastName;
     private String email;
-
+    private Address addresses;
 
 }
