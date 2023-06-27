@@ -64,6 +64,17 @@ public class MailService implements IMailService {
             // Xử lý lỗi khi gửi email
         }
     }
+
+    @Async
+    @Override
+    public void sendEmail(String toAddress, String subject, String content) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toAddress);
+        message.setSubject(subject);
+        message.setText(content);
+
+        javaMailSender.send(message);
+    }
 }
 
 

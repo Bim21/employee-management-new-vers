@@ -316,6 +316,11 @@ public class EmployeeService implements IEmployeeService {
         return employeeRepository.getEmployeesWithoutCheckInOut();
     }
 
+    @Override
+    public List<CheckInOut> getCheckInOutsByDate(LocalDate date) {
+        return checkInOutRepository.findByDate(date);
+    }
+
     @CacheEvict
     public void clearCacheById(int id){
 

@@ -27,4 +27,6 @@ public class Cronjob {
     @Column(name = "job_parameters")
     private String jobParameters;
 
+    @Column(name = "employee_id")
+    private Integer employeeId;
 }
