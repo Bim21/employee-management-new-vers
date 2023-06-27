@@ -135,6 +135,7 @@ public class EmployeeService implements IEmployeeService {
         return employeeResponseDTOList;
     }
 
+//    @Async
     @Transactional(rollbackOn = {Exception.class, Throwable.class})
     @Override
     public EmployeeResponseDTO createEmployee(EmployeeRequestDTO employeeRequestDTO) throws MessagingException {
@@ -146,6 +147,7 @@ public class EmployeeService implements IEmployeeService {
         Address address = new Address();
         address.setStreet(employeeRequestDTO.getAddresses().getStreet());
         address.setCity(employeeRequestDTO.getAddresses().getCity());
+        address.setEmployee(employee);
         employee.setAddresses(address);
         Employee saveEmployee = employeeRepository.save(employee);
         EmployeeResponseDTO saveEmployeeDTO = mapper.map(saveEmployee, EmployeeResponseDTO.class);
@@ -193,7 +195,8 @@ public class EmployeeService implements IEmployeeService {
         List<EmployeeDTO> employeeDTOs = new ArrayList<>();
 
         for (Employee employee : employees) {
-            EmployeeDTO dto = employeeMapper.toDTO(employee);
+//            EmployeeDTO dto = employeeMapper.toDTO(employee);
+            EmployeeDTO dto = mapper.map(employee, EmployeeDTO.class);
             employeeDTOs.add(dto);
         }
 
@@ -255,8 +258,8 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Override
-    public List<CheckInOutDTO> getCheckInOutsByEmployeeId(int employeeId) {
-        Employee employee = employeeRepository.findById(employeeId).orElse(null);
+    public List<CheckInOutDTO> getCheckInOutsByEmployeeId(int id) {
+        Employee employee = employeeRepository.findById(id).orElse(null);
 
         if (employee != null) {
             List<CheckInOut> checkInOuts = employee.getCheckInOuts();
@@ -273,7 +276,7 @@ public class EmployeeService implements IEmployeeService {
 
             return checkInOutDTOs;
         } else {
-            throw new NotFoundException("Employee not found with ID: " + employeeId);
+            throw new NotFoundException("Employee not found with ID: " + id);
         }
     }
 
@@ -312,6 +315,7 @@ public class EmployeeService implements IEmployeeService {
     public List<EmployeeWithoutCheckInOutProjection> getEmployeesWithoutCheckInOut() {
         return employeeRepository.getEmployeesWithoutCheckInOut();
     }
+
     @CacheEvict
     public void clearCacheById(int id){
 

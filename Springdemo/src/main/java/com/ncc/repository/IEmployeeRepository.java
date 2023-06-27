@@ -1,6 +1,7 @@
 package com.ncc.repository;
 
 import com.ncc.dto.EmployeeResponseDTO;
+import com.ncc.entity.CheckInOut;
 import com.ncc.entity.Employee;
 import com.ncc.projection.EmployeeWithoutCheckInOutProjection;
 import org.springframework.cache.annotation.Cacheable;

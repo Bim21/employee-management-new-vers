@@ -379,3 +379,24 @@ Lưu ý rằng để sử dụng các tính năng trên, bạn cần cấu hình
 
 nên ưu tiên sử dụng "Automatic Custom Queries" và "Customizing the Result with Spring Data Projection" để tận dụng lợi ích của việc tự động tạo câu truy vấn và tối ưu hiệu suất.
 Các loại query khác như "Manual Custom Queries" và "Native Query" nên được sử dụng khi cần tạo các câu truy vấn phức tạp hoặc sử dụng tính năng đặcif của cơ sở dữ liệu.
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Unit testing là một phương pháp kiểm tra trong đó các units của source riêng lẻ được kiểm tra để xác định xem chúng đã sẵn sàng để sử dụng hay chưa, trong khi Integration Testing kiểm tra sự tích hợp giữa các module phần mềm.
+Unit testing kiểm tra từng phần của chương trình và cho thấy rằng các phần riêng lẻ là chính xác, trong khi Integration Testing kết hợp các module khác nhau trong ứng dụng và kiểm tra như một nhóm để xem chúng đang hoạt động tốt.
+Unit testing bắt đầu với đặc tả module, trong khi Integration Testing bắt đầu với đặc tả giao diện.
+Unit testing có thể được thực hiện bất kỳ lúc nào, mặt khác, Integration Testing được thực hiện sau Unit testing và trước System testing.
+Unit testing được thực hiện bởi developer, trong khi Integration Testing được thực hiện bởi nhóm tester.
+Lỗi Unit Testing có thể được tìm thấy dễ dàng, trong khi Integration Testing rất khó tìm ra lỗi.
+
+
+1. Unit testing là gì?
+
+Unit Testing được thực hiện bởi các dev và test các unit code (hay còn gọi là module, thành phần) mà họ đã phát triển.
+Đây là một phương pháp test mà các đơn vị source code riêng lẻ được kiểm tra để xác định xem chúng đã sẵn sàng để sử dụng hay chưa.
+Nó giúp giảm chi phí sửa lỗi vì lỗi được xác định trong giai đoạn đầu của vòng đời phát triển.
+
+2. Integration Testing là gì?
+
+Integration Testing  (Kiểm thử tích hợp) được thực hiện bởi tester và kiểm tra tích hợp giữa các module phần mềm.
+Đây là một kỹ thuật kiểm thử phần mềm trong đó các đơn vị riêng lẻ của một chương trình được kết hợp và kiểm tra như một nhóm.
+Test stubs và test drivers được sử dụng để hỗ trợ integration testing.
+Integration Testing được thực hiện theo hai cách, chúng là phương pháp từ dưới lên và phương pháp từ trên xuống.

@@ -25,6 +25,7 @@ public class Address {
     private String street;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id")
     private Employee employee;
 
 }

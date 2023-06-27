@@ -27,11 +27,12 @@ public interface IEmployeeService {
 
     List<EmployeeDTO> getAllEmployee();
 
-    List<CheckInOutDTO> getCheckInOutsByEmployeeId(int employeeId);
+    List<CheckInOutDTO> getCheckInOutsByEmployeeId(int id);
 
     Page<EmployeeResponseDTO> getEmployeesWithCheckInOuts(LocalDate startDate, LocalDate endDate, Pageable pageable);
 
 
     List<Employee> getEmployeesWithoutError();
     List<EmployeeWithoutCheckInOutProjection> getEmployeesWithoutCheckInOut();
+
 }
