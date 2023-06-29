@@ -31,4 +31,7 @@ public interface ICheckInOutRepository extends JpaRepository<CheckInOut, Integer
     @Query("SELECT c FROM CheckInOut c WHERE c.employee = :employee AND YEAR(c.checkInTime) = :year AND MONTH(c.checkInTime) = :month AND c.isError = true")
     List<CheckInOut> findErrorCheckInsByEmployeeAndMonth(@Param("employee") Employee employee, @Param("year") int year, @Param("month") int month);
 
+    List<CheckInOut> findByDate(LocalDate date);
+
+    boolean existsByEmployeeAndDate(Employee employee, LocalDate currentDate);
 }

@@ -41,6 +41,9 @@ public class Employee {
     @Column(name = "ACTIVE")
     private boolean active;
 
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    private Address addresses;
+
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<EmployeeRole> employeeRoles;
 

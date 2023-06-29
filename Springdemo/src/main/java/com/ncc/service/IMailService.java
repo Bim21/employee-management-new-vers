@@ -8,4 +8,6 @@ import java.util.Locale;
 public interface IMailService {
     void sendWelcomeEmail(Employee employee);
     void sendCheckInOutReminderEmail(Employee employee);
+
+    void sendEmail(String toAddress, String subject, String content);
 }
