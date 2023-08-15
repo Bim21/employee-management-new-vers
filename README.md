@@ -3,6 +3,8 @@
 Tool được build bằng .NET và Angular. 
 Tool ERP-PROJECT được quản lý và cập nhật thường xuyên bởi đội ngũ nhân viên của NCC. 
 
+-----
+
 ### Installation
 1. Cài đặt các thư viện của dự án
 ```
