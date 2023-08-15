@@ -14,6 +14,6 @@ Tool ERP-PROJECT được quản lý và cập nhật thường xuyên bởi đ�
 2. Thiết lập Môi trường
 **Sao chép dự án từ kho lưu trữ:**
 ```bash
-$ git clone https://github.com/your-username/project-management.git
-$ cd project-management
+$ git clone https://github.com/ncc-erp/ncc-erp-project
+$ cd ncc-erp-project
 
