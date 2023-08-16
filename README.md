@@ -1,10 +1,8 @@
-# TimeSheet
-
-
+# Project Management
 
 ## Overview
-
-TimeSheet is an open-source application that  a versatile application utilized by both companies and employees for efficient time management, encompassing various functionalities such as work hours tracking and request submissions for time off. It seamlessly integrates with other internal applications, acting as a hub that connects tools like the check-in/out app and the komu app. This integration facilitates the seamless dissemination of notifications to employees within the company. Additionally, it collaborates with trackers to accurately monitor and record employees' working hours, ensuring comprehensive timekeeping 
+Project Management is an open-source application that a versatile application utilized by both companies and employees, project management used to manage company projects, project participants, progress, and project evaluations. The tool is built using .NET and Angular. The Management Project is regularly managed and updated by the staff team of NCC.
+ 
 ## Table of Contents
 
 - [Getting Started](#getting-started)
@@ -33,14 +31,14 @@ Before you begin, ensure you have met the following requirements:
 ### Backend Setup
 
 1. **Create a folder** to store the backend and frontend code.
-- example:  folder `timesheet`
+- example:  folder `ncc-project`
 
 2. **Open a command prompt** in the created folder.
 
 3. **Clone the backend repository** using the following command:
 
    ```bash
-   git clone https://github.com/ncc-erp/ncc-erp-timesheet.git
+   git clone https://github.com/ncc-erp/ncc-erp-project.git
    
 4. Open the backend solution using **Visual Studio 2022**:
 
@@ -72,7 +70,7 @@ Select **Set as StartUp Project**.
 ```json
 {
   "ConnectionStrings": {
-    "Default": "Server=servername; Database=local-timesheet; User ID=yourUserId;Password=yourPassword;"
+    "Default": "Server=servername; Database=local-ncc-project; User ID=yourUserId;Password=yourPassword;"
   },
   // ... other settings ...
 }
@@ -83,7 +81,7 @@ Select **Set as StartUp Project**.
 ### Frontend Setup
 1. Open Front-end repository
 ```bash
-cd C:\Users\dell\Documents\CSharpDotnet\timesheet\ncc-erp-timesheet\angular
+cd C:\Users\dell\Documents\CSharpDotnet\timesheet\ncc-erp-project\angular
 ```
 - run code
 ```bash
@@ -127,9 +125,11 @@ npm start
 ```
 
 # Video Tutorial
-Check out our video tutorial on how to use TimeSheet:
+Check out our video tutorial on how to use Project Management:
+
+
 
 <Video Tutorial>
 
 # License
-<lisence>
+[MIT](https://github.com/ncc-project/metasign/blob/dev/LICENSE)
