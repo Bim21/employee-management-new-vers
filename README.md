@@ -1,38 +1,135 @@
-## ERP-PROJECT (Project Management Tool)
-This is a project management tool used to manage company projects, project participants, progress, and project evaluations. The tool is built using .NET and Angular. The ERP-PROJECT tool is regularly managed and updated by the staff team of NCC.
+# TimeSheet
 
------
 
-### Installation
-1. Install the project dependencies:
-- [ASP.NET Core SDK](https://dotnet.microsoft.com/download) (version 3.1.426)
-- [Node.js](https://nodejs.org/) (LTS version)
-- [Angular CLI](https://cli.angular.io/) (global installation)
 
-2. Environment Setup
-**Clone the project from the repository:**
-```bash
-$ git clone https://github.com/ncc-erp/ncc-erp-project
-$ cd ncc-erp-project
+## Overview
+
+TimeSheet is an open-source application that  a versatile application utilized by both companies and employees for efficient time management, encompassing various functionalities such as work hours tracking and request submissions for time off. It seamlessly integrates with other internal applications, acting as a hub that connects tools like the check-in/out app and the komu app. This integration facilitates the seamless dissemination of notifications to employees within the company. Additionally, it collaborates with trackers to accurately monitor and record employees' working hours, ensuring comprehensive timekeeping 
+## Table of Contents
+
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Backend Setup](#backend-setup)
+  - [Frontend Setup](#frontend-setup)
+  - [Building](#building)
+  - [Running](#running)
+- [Video Tutorial](#video-tutorial)
+- [License](#license)
+
+## Getting Started
+
+### Prerequisites
+
+Before you begin, ensure you have met the following requirements:
+
+- [Visual Studio 2022](https://visualstudio.microsoft.com/) installed.
+- [.NET Core 2.1 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/2.1) installed.
+- [ASP.NET Runtime 2.0.9](https://dotnet.microsoft.com/en-us/download/dotnet/2.0) installed.
+- [Visual Studio Code](https://code.visualstudio.com/) installed.
+- [Node.js 14.20](https://nodejs.org/en/blog/release/v14.20.0) and npm (Node.js Package Manager) installed.
+- [SQL Server](https://www.microsoft.com/en-in/sql-server/sql-server-downloads) installed.
+- <List any other prerequisites>
+
+### Backend Setup
+
+1. **Create a folder** to store the backend and frontend code.
+- example:  folder `timesheet`
+
+2. **Open a command prompt** in the created folder.
+
+3. **Clone the backend repository** using the following command:
+
+   ```bash
+   git clone https://github.com/ncc-erp/ncc-erp-timesheet.git
+   
+4. Open the backend solution using **Visual Studio 2022**:
+
+- Launch `Visual Studio 2022`.
+- Select `File` > `Open` > `Project/Solution.`
+- Navigate to the backend folder within created folder `timesheet` and open the solution file.
+5. Restore NuGet packages:
+
+- In Solution Explorer, right-click the solution and select **Restore NuGet Packages**.
+6. **Set the startup project:**
+
+- Right-click the desired project (usually the API project) in `Solution Explorer`.
+Select **Set as StartUp Project**.
+
+7. Get the local database file and rename it:
+
+- Locate the **local-timesheet.sql** file in your local environment.
+- Rename it to **local-timesheet.sql**
+8. Update the `appsettings.json` file:
+
+- Open the `appsettings.json` file in the backend project.
+
+- Locate the `ConnectionStrings` section.
+
+- Update the **Default** connection string to match your local database information:
+
+
+
+```json
+{
+  "ConnectionStrings": {
+    "Default": "Server=servername; Database=local-timesheet; User ID=yourUserId;Password=yourPassword;"
+  },
+  // ... other settings ...
+}
 ```
 
-### Run Application (ASP.NET) 
+9. Press `F5` or select `Debug` > `Start Debugging` to run the backend.
 
-1. **Open apsnet-core folder in Visual Studio :**
-   - Open the solution file projectManagement.sln in the aspnet-core folder using Visual Studio. 
+### Frontend Setup
+1. Open Front-end repository
+```bash
+cd C:\Users\dell\Documents\CSharpDotnet\timesheet\ncc-erp-timesheet\angular
+```
+- run code
+```bash
+code .
+```
 
-2. **Choose the run mode:**
-   - Select the run mode (Debug or Release) and enviroment (IIS Express or specific server) as needed. Edit the listening port (if necessary).
+2. Install Angular CLI 7.1.3 globally:
 
-3. **Edit the listening port (if necssary):**
-   - Open `launchSettings.json` in the `ProjectManagement.Web.Host/Properties`.
-   - Find the entry corresponding to the project (ví dụ: `ProjectManagement.Web.Host`).
-   - Change the value of `applicationUrl` to specify the port that the backend will listen on.
+```bash
 
-4. **Press F5 (or select Debug > Start Debugging) to run the project.**
+npm install -g @angular/cli@7.1.3
 
-application will be compiled and run in the enviroment you've chosen. Information about the listening port will appear in the Output window in Visual Studio.
+```
+3. Install frontend dependencies:
+```bash
+npm install
+```
+4. Run front-end
+```bash
+npm start
+```
+### Building
+To build the project, follow these steps:
 
+1.Build the backend using `Visual Studio Code` or the `command line`.
 
+2.Build the frontend:
 
+```bash
+npm run build
+```
+### Running
+To run the project, use these commands:
 
+1. Start the backend using `Visual Studio Code` or the `command line`.
+
+2. Start the frontend:
+
+```bash
+npm start
+```
+
+# Video Tutorial
+Check out our video tutorial on how to use TimeSheet:
+
+<Video Tutorial>
+
+# License
+<lisence>
