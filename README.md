@@ -65,8 +65,6 @@ Select **Set as StartUp Project**.
 
 - Update the **Default** connection string to match your local database information:
 
-
-
 ```json
 {
   "ConnectionStrings": {
@@ -76,43 +74,31 @@ Select **Set as StartUp Project**.
 }
 ```
 
+- In the **CorsOrigins**, you add public URL of front-end:
+
+  "App": {
+    "ServerRootAddress": "http://localhost:21021/",
+    "ClientRootAddress": "http://localhost:4200/",
+    "CorsOrigins": "http://localhost:4200,http://localhost:4202,http://localhost:8081,http://localhost:3000, more link public in FE..."
+  },
+  
+- In the **lauchSetting** you have to change your URL:
+  
+```json
+ "ProjectManagement.Web.Host": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "your URL", 
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "your URL"
+    }
+```
+
+- Make sure that the backend correctly receives the URL address from the frontend, and similarly, the frontend accurately receives the URL address from the backend.
+  
 9. Press `F5` or select `Debug` > `Start Debugging` to run the backend.
-    
-## Deploying Backend to IIS
-
-### Prerequisites
-
-Before you begin deploying the backend to IIS, ensure you have met the following prerequisites:
-
-- Have completed the steps to configure and deploy the backend project as outlined in your provided instructions.
-
-### Steps
-
-1. **Build the Application**: First, you need to build your backend application. Make sure you have done this using Visual Studio or through the command line.
-
-2. **Publish the Application**: Next, you need to publish your backend project to generate the necessary files for deployment on IIS. This can be done using the following command in your backend project:
-
-   ```bash
-   dotnet publish -c Release
-
-This command will generate the necessary files in the bin/Release/netcoreapp3.1/publish directory.
-
-1. Configure IIS: Open the "Turn Windows features on or off" window on your computer and ensure that "Internet Information Services" and "ASP.NET" are turned on.
-
-2. Add Application to IIS: Open the IIS Manager and follow these steps:
-
-- Right-click on "Sites" and select "Add Website."
-- Name your website, specify the path to the published directory, and configure options like IP Address and Port.
-- In the "Application pool" section, you can choose an existing application pool or create a new one.
-3. Configure Database Connection: Make sure the connection string in the appsettings.json file is updated to match the database you are deploying to IIS.
-
-4. Start the Application: In the IIS Manager, select the application you just added and right-click to start the application.
-
-5. Test the Application: Open a web browser and navigate to the URL of the website you configured in IIS. Ensure that the application works as expected.
-
-Remember to consult the IIS documentation and specific guides for the version of IIS you are using for detailed information on configuring and deploying .NET applications on IIS.
-
-Feel free to reach out to the NCC staff team if you encounter any issues during the deployment process.
 
 ### Frontend Setup
 1. Open Front-end repository
