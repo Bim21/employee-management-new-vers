@@ -123,13 +123,7 @@ To run the project, use these commands:
 ```bash
 npm start
 ```
-
-# Video Tutorial
-Check out our video tutorial on how to use Project Management:
-
-
-
-<Video Tutorial>
+# Screenshots
 
 # License
 [MIT](https://github.com/ncc-project/metasign/blob/dev/LICENSE)
