@@ -21,8 +21,8 @@ Project Management is an open-source application that a versatile application ut
 Before you begin, ensure you have met the following requirements:
 
 - [Visual Studio 2022](https://visualstudio.microsoft.com/) installed.
-- [.NET Core 2.1 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/2.1) installed.
-- [ASP.NET Runtime 2.0.9](https://dotnet.microsoft.com/en-us/download/dotnet/2.0) installed.
+- [.NET Core 3.1.426 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/3.1) installed.
+- [ASP.NET Runtime 3.1](https://dotnet.microsoft.com/en-us/download/dotnet/3.1) installed.
 - [Visual Studio Code](https://code.visualstudio.com/) installed.
 - [Node.js 14.20](https://nodejs.org/en/blog/release/v14.20.0) and npm (Node.js Package Manager) installed.
 - [SQL Server](https://www.microsoft.com/en-in/sql-server/sql-server-downloads) installed.
@@ -55,8 +55,8 @@ Select **Set as StartUp Project**.
 
 7. Get the local database file and rename it:
 
-- Locate the **local-timesheet.sql** file in your local environment.
-- Rename it to **local-timesheet.sql**
+- Locate the **local-project.sql** file in your local environment.
+- Rename it to **local-project.sql**
 8. Update the `appsettings.json` file:
 
 - Open the `appsettings.json` file in the backend project.
@@ -70,7 +70,7 @@ Select **Set as StartUp Project**.
 ```json
 {
   "ConnectionStrings": {
-    "Default": "Server=servername; Database=local-ncc-project; User ID=yourUserId;Password=yourPassword;"
+    "Default": "Server=servername; Database=local-project; User ID=yourUserId;Password=yourPassword;"
   },
   // ... other settings ...
 }
@@ -88,21 +88,31 @@ cd C:\Users\dell\Documents\CSharpDotnet\timesheet\ncc-erp-project\angular
 code .
 ```
 
-2. Install Angular CLI 7.1.3 globally:
+2. Install Angular CLI 9.1.15 globally:
 
 ```bash
 
-npm install -g @angular/cli@7.1.3
+npm install -g @angular/cli@9.1.15
 
 ```
 3. Install frontend dependencies:
 ```bash
 npm install
 ```
+
+If you encounter an error while running npm install, you can use the command 
+```bash 
+npm install --legacy-peer-deps 
+```
+
+as a replacement for npm install.
+The command npm install --legacy-peer-deps is used to address issues related to installing dependencies in a Node.js project when versions of the dependent packages are not compatible with each other. 
+
 4. Run front-end
 ```bash
 npm start
 ```
+
 ### Building
 To build the project, follow these steps:
 
